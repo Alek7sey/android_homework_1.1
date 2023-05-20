@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Android_homework_1.1</string>
-
+    <string name="nmedia">NMedia!</string>
 </resources>
