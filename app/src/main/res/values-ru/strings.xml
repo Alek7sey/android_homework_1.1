@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="nmedia">НМедиа!</string>
+    <string name="textAuthor">НМедиа!</string>
     <string name="app_name">НМедиа</string>
+    <string name="textPublication">Привет, это нетология</string>
+    <string name="avatar">Аватар</string>
 </resources>
