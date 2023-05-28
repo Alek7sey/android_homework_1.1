@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="textAuthor">НМедиа!</string>
     <string name="avatar">Аватар</string>
-    <string name="app_name">Nmedia!</string>
+    <string name="app_name">Нмедиа!</string>
     <string name="likes">likes</string>
 </resources>
