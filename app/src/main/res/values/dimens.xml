@@ -3,4 +3,5 @@
     <dimen name="common_spacing">16dp</dimen>
     <dimen name="post_avatar_size">48dp</dimen>
     <dimen name="max_width_count">44dp</dimen>
+    <dimen name="text_spacing">8dp</dimen>
 </resources>
