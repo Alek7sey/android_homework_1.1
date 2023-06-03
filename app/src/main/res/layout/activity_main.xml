@@ -15,12 +15,14 @@
         app:layout_constraintBottom_toBottomOf="@id/topBarrier"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@sample/post.json/data/authorAvatar" />
+        tools:srcCompat="@sample/post.json/data/authorAvatar"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <ImageView
         android:id="@+id/menu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/ic_menu_size"
+        android:layout_height="@dimen/ic_menu_size"
+        android:contentDescription="@string/menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_menu" />
@@ -71,41 +73,42 @@
         tools:text="@sample/post.json/data/content" />
 
     <ImageButton
-        android:id="@+id/likes"
+        android:id="@+id/likesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/likes"
         android:background="@android:color/transparent"
-        app:layout_constraintEnd_toStartOf="@id/likes_count"
+        app:layout_constraintEnd_toStartOf="@id/likesCount"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content"
         app:srcCompat="@drawable/ic_likes" />
 
     <TextView
-        android:id="@+id/likes_count"
+        android:id="@+id/likesCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="42dp"
         android:maxLines="1"
         android:layout_marginStart="@dimen/text_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        app:layout_constraintEnd_toStartOf="@+id/share"
-        app:layout_constraintStart_toEndOf="@+id/likes"
+        app:layout_constraintEnd_toStartOf="@+id/shareButton"
+        app:layout_constraintStart_toEndOf="@+id/likesButton"
         app:layout_constraintTop_toBottomOf="@id/content"
         tools:text="10" />
 
     <ImageButton
-        android:id="@+id/share"
+        android:id="@+id/shareButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        android:contentDescription="share"
         android:background="@android:color/transparent"
-        app:layout_constraintStart_toEndOf="@id/likes_count"
+        android:contentDescription="@string/share"
+        app:layout_constraintStart_toEndOf="@id/likesCount"
         app:layout_constraintTop_toBottomOf="@id/content"
-        app:srcCompat="@drawable/ic_share" />
+        app:srcCompat="@drawable/ic_share"
+        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/share_count"
@@ -115,16 +118,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        app:layout_constraintStart_toEndOf="@id/share"
+        app:layout_constraintStart_toEndOf="@id/shareButton"
         app:layout_constraintTop_toBottomOf="@id/content"
         tools:text="999,9K" />
 
     <ImageButton
-        android:id="@+id/user_views"
+        android:id="@+id/userViewsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:layout_marginTop="@dimen/common_spacing"
+        android:contentDescription="@string/views"
         app:layout_constraintEnd_toStartOf="@id/views_count"
         app:layout_constraintTop_toBottomOf="@id/content"
         app:srcCompat="@drawable/ic_user_views"
