@@ -2,5 +2,8 @@
 <resources>
     <string name="avatar">avatar</string>
     <string name="app_name">Nmedia!</string>
-    <string name="likes">likes</string>
+    <string name="likes" translatable="false">likes</string>
+    <string name="share">share</string>
+    <string name="menu">menu</string>
+    <string name="views">views</string>
 </resources>
