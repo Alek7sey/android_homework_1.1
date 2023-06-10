@@ -1,14 +1,12 @@
 package ru.netology.nmedia.dto
 
-import kotlin.math.floor
-
 data class Post(
     val id: Long,
     val author: String,
     val content: String,
     val published: String,
-    val likes: Int,
-    val shareCount: Int,
-    val viewsCount: Int,
+    val likes: Int = 0,
+    val shareCount: Int = 0,
+    val viewsCount: Int = 0,
     val likedByMe: Boolean
 )
