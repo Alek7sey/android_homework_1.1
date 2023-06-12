@@ -28,7 +28,7 @@ class PostViewModel : ViewModel() {
         edited.value?.let {
             repository.save(it)
         }
-        edited.value = empty
+        clear()
     }
 
     fun edit(post: Post) {
@@ -43,4 +43,8 @@ class PostViewModel : ViewModel() {
     }
 
     fun removeById(id: Long) = repository.removeById(id)
+
+    fun clear() {
+        edited.value = empty
+    }
 }
