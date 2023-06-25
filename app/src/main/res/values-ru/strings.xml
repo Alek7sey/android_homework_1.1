@@ -12,4 +12,8 @@
     <string name="description_post_save">Сохранить</string>
     <string name="error_empty_content">Поле не может быть пустым</string>
     <string name="description_post_cancel">Отмена</string>
+    <string name="edit_text_post">Редактировать контент</string>
+    <string name="save">Сохранить</string>
+    <string name="add_post">Добваить</string>
+    <string name="chooser_share_post">Репост</string>
 </resources>
