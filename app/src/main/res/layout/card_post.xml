@@ -82,7 +82,7 @@
         android:checkable="true"
         android:contentDescription="@string/likes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/postVideo"
         tools:checked="true"
         tools:text="999k" />
 
@@ -96,7 +96,7 @@
         android:contentDescription="@string/share"
         app:icon="@drawable/ic_share"
         app:layout_constraintStart_toEndOf="@id/likesButton"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/postVideo"
         tools:text="999" />
 
     <com.google.android.material.button.MaterialButton
@@ -108,8 +108,35 @@
         android:contentDescription="@string/views"
         app:icon="@drawable/ic_user_views"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/postVideo"
         tools:text="999,7K" />
+
+    <ImageView
+        android:id="@+id/postVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="212dp"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:contentDescription="video_post"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:srcCompat="@drawable/post_video" />
+
+    <ImageView
+        android:id="@+id/iconPlay"
+        android:layout_width="@dimen/post_avatar_size"
+        android:layout_height="@dimen/post_avatar_size"
+        app:layout_constraintBottom_toBottomOf="@+id/postVideo"
+        app:layout_constraintEnd_toEndOf="@+id/postVideo"
+        app:layout_constraintStart_toStartOf="@+id/postVideo"
+        app:layout_constraintTop_toTopOf="@+id/postVideo"
+        app:srcCompat="@drawable/ic_play_circle" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="postVideo, iconPlay"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

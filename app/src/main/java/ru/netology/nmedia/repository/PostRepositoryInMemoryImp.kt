@@ -19,14 +19,16 @@ class PostRepositoryInMemoryImp : PostRepository {
             author = "Нетология. Университет интернет-профессий будущего",
             content = "Делиться впечатлениями о любимых фильмах легко, а что если рассказать так, чтобы все заскучали \uD83D\uDE34\n",
             published = "22 сентября в 10:14",
-            likedByMe = false
+            likedByMe = false,
+            linkVideo = "https://www.youtube.com/watch?v=WhWc3b3KhnY"
         ),
         Post(
             id = nextId++,
             author = "Нетология. Университет интернет-профессий будущего",
             content = "Таймбоксинг — отличный способ навести порядок в своём календаре и разобраться с делами, которые долго откладывали на потом. Его главный принцип — на каждое дело заранее выделяется определённый отрезок времени. В это время вы работаете только над одной задачей, не переключаясь на другие. Собрали советы, которые помогут внедрить таймбоксинг \uD83D\uDC47\uD83C\uDFFB",
             published = "22 сентября в 10:12",
-            likedByMe = false
+            likedByMe = false,
+            linkVideo = "https://www.youtube.com/watch?v=WhWc3b3KhnY"
         ),
         Post(
             id = nextId++,
@@ -113,7 +115,7 @@ class PostRepositoryInMemoryImp : PostRepository {
                     likedByMe = false,
                     published = "now"
                 )
-             ) + posts
+            ) + posts
             data.value = posts
         } else {
             posts = posts.map {

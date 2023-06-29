@@ -16,4 +16,6 @@
     <string name="save">Save</string>
     <string name="add_post">add post</string>
     <string name="chooser_share_post">Share post</string>
+    <string name="title_youtube_video">YouTube Video</string>
+    <string name="url_is_null">URL is null</string>
 </resources>
