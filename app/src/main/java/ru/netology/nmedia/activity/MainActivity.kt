@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.activity.result.launch
 import androidx.activity.viewModels
 import ru.netology.nmedia.R
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onShare(post: Post) {
-                //  viewModel.shareById(post.id)
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, post.content)
@@ -53,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onEdit(post: Post) {
-                //viewModel.edit(post)
                 editPostLauncher.launch(post.content)
                 viewModel.edit(post)
             }
@@ -63,13 +60,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onRunVideo(post: Post) {
-                val intent = Intent().apply {
-                    action = Intent.ACTION_VIEW
-                    putExtra("urlVideo", post.linkVideo)
-                    type = "*/*"
-                }
-                val urlIntent = Intent.createChooser(intent, getString(R.string.title_youtube_video))
-                startActivity(urlIntent)
+                val videoIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
+                startActivity(videoIntent)
             }
         })
 
@@ -86,15 +78,6 @@ class MainActivity : AppCompatActivity() {
         binding.fab.setOnClickListener {
             newPostLauncher.launch()
         }
-
-//        binding.root.setOnClickListener {
-//            val url =
-//            val intent = Intent().apply {
-//                action = Intent.ACTION_VIEW
-//
-//            }
-//        }
-
 
 //        viewModel.edited.observe(this) { post ->
 //            if (post.id != 0L) {

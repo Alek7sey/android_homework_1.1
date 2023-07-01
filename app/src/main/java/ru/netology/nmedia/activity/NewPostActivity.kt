@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import ru.netology.nmedia.databinding.ActivityNewPostBinding
 
 class NewPostActivity : AppCompatActivity() {
@@ -17,7 +18,7 @@ class NewPostActivity : AppCompatActivity() {
             binding.editText.setText(editContent)
         }
         binding.btnOk.setOnClickListener {
-            if(binding.editText.text.isBlank()) {
+            if (binding.editText.text.isBlank()) {
                 setResult(Activity.RESULT_CANCELED, intent)
             } else {
                 val content = binding.editText.text.toString()
@@ -26,6 +27,13 @@ class NewPostActivity : AppCompatActivity() {
             }
             finish()
         }
-
+        this.onBackPressedDispatcher.addCallback(
+            this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    setResult(RESULT_CANCELED, intent)
+                    finish()
+                }
+            }
+        )
     }
 }

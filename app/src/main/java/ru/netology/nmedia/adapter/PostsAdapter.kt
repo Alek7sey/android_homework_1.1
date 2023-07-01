@@ -52,8 +52,9 @@ class PostViewHolder(
             shareButton.text = clicksCount(post.shareCount)
             if (post.linkVideo != null) {
                 groupVideo.visibility = View.VISIBLE
+            } else {
+                groupVideo.visibility = View.GONE
             }
-
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_post)
@@ -80,6 +81,7 @@ class PostViewHolder(
         }
     }
 }
+
 fun Group.setAllOnClickListener(listener: View.OnClickListener?) {
     referencedIds.forEach { id ->
         rootView.findViewById<View>(id).setOnClickListener(listener)
