@@ -12,4 +12,10 @@
     <string name="description_post_save">Save</string>
     <string name="error_empty_content">Content can\'t be empty</string>
     <string name="description_post_cancel">Cancel</string>
+    <string name="edit_text_post">Edit content</string>
+    <string name="save">Save</string>
+    <string name="add_post">add post</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="title_youtube_video">YouTube Video</string>
+    <string name="url_is_null">URL is null</string>
 </resources>

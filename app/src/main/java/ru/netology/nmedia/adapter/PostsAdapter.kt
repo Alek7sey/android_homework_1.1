@@ -1,8 +1,10 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +19,7 @@ interface OnInteractionListener {
     fun onViews(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
+    fun onRunVideo(post: Post) {}
 }
 
 class PostsAdapter(
@@ -37,6 +40,7 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
+
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -45,7 +49,11 @@ class PostViewHolder(
             likesButton.isChecked = post.likedByMe
             likesButton.text = clicksCount(post.likes)
             shareButton.text = clicksCount(post.shareCount)
-
+            if (post.linkVideo != null) {
+                groupVideo.visibility = View.VISIBLE
+            } else {
+                groupVideo.visibility = View.GONE
+            }
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_post)
@@ -68,8 +76,14 @@ class PostViewHolder(
             }
             likesButton.setOnClickListener { onInteractionListener.onLike(post) }
             shareButton.setOnClickListener { onInteractionListener.onShare(post) }
-
+            groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
         }
+    }
+}
+
+fun Group.setAllOnClickListener(listener: View.OnClickListener?) {
+    referencedIds.forEach { id ->
+        rootView.findViewById<View>(id).setOnClickListener(listener)
     }
 }
 
