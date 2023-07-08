@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
+import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.StringProperty
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -31,9 +32,11 @@ class NewPostFragment : Fragment() {
         binding.btnOk.setOnClickListener {
             val content = binding.editText.text.toString()
             if (content.isNotBlank()) {
-                //activity?.setResult(Activity.RESULT_CANCELED, intent)
                 viewModel.changeContent(content)
                 viewModel.save()
+            } else {
+                viewModel.clear()
+                binding.editText.clearFocus()
             }
             findNavController().navigateUp()
         }

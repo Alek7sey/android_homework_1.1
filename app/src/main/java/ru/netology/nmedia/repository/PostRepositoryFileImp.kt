@@ -44,14 +44,13 @@ class PostRepositoryFileImp(
             ) + posts
             data.value = posts
             sync()
-            return
+        } else {
+            posts = posts.map {
+                if (it.id != post.id) it else it.copy(content = post.content)
+            }
+            data.value = posts
+            sync()
         }
-        posts = posts.map {
-            if (it.id != post.id) it else it.copy(content = post.content)
-        }
-        data.value = posts
-        sync()
-
     }
 
     override fun likeById(id: Long) {
