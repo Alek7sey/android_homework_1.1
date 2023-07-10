@@ -20,6 +20,7 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onRunVideo(post: Post) {}
+    fun onViewPost(post: Post) {}
 }
 
 class PostsAdapter(
@@ -77,6 +78,7 @@ class PostViewHolder(
             likesButton.setOnClickListener { onInteractionListener.onLike(post) }
             shareButton.setOnClickListener { onInteractionListener.onShare(post) }
             groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
+            root.setOnClickListener { onInteractionListener.onViewPost(post) }
         }
     }
 }
