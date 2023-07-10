@@ -20,8 +20,9 @@ class PostRepositoryFileImp(
     init {
         val file = context.filesDir.resolve(filename)
         if (file.exists()) {
-            context.openFileInput(filename).bufferedReader().use {
+            context.openFileInput(filename).bufferedReader().use { it ->
                 posts = gson.fromJson(it, type)
+                nextId = posts.maxOfOrNull { it.id }?.inc() ?: 1
                 data.value = posts
             }
         } else {
@@ -43,14 +44,13 @@ class PostRepositoryFileImp(
             ) + posts
             data.value = posts
             sync()
-            return
+        } else {
+            posts = posts.map {
+                if (it.id != post.id) it else it.copy(content = post.content)
+            }
+            data.value = posts
+            sync()
         }
-        posts = posts.map {
-            if (it.id != post.id) it else it.copy(content = post.content)
-        }
-        data.value = posts
-        sync()
-
     }
 
     override fun likeById(id: Long) {
