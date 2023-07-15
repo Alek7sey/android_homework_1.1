@@ -1,7 +1,5 @@
 package ru.netology.nmedia.activity
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.StringProperty
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -28,6 +25,7 @@ class NewPostFragment : Fragment() {
             binding.editText.setText(it)
         }
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        binding.editText.setText(viewModel.edited.value?.content.toString())
         binding.editText.requestFocus()
         binding.btnOk.setOnClickListener {
             val content = binding.editText.text.toString()
@@ -40,14 +38,17 @@ class NewPostFragment : Fragment() {
             }
             findNavController().navigateUp()
         }
-//        this.onBackPressedDispatcher.addCallback(
-//            this, object : OnBackPressedCallback(true) {
-//                override fun handleOnBackPressed() {
-//                    activity?.setResult(RESULT_CANCELED, intent)
-//                    activity?.finish()
-//                }
-//            }
-//        )
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val content = binding.editText.text.toString()
+                    viewModel.changeContent(content)
+                    findNavController().navigateUp()
+                }
+            }
+        )
+
         return binding.root
     }
 

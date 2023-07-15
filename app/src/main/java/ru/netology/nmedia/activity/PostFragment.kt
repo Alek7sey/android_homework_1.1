@@ -29,8 +29,7 @@ class PostFragment : Fragment() {
         arguments?.textArg?.let {
             postId = it.toString().toLong()
         }
-        // val text = List(100) { it }.joinToString(separator = "\n")
-        // binding.post.content.text = text
+
         val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
 
             override fun onLike(post: Post) {

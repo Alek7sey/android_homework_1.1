@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -48,14 +47,9 @@ class FeedFragment : Fragment() {
                 viewModel.viewById(post.id)
             }
 
-//            val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
-//                result ?: return@registerForActivityResult
-//                viewModel.changeContent(result)
-//                viewModel.save()
-//            }
+
 
             override fun onEdit(post: Post) {
-//                editPostLauncher.launch(post.content)
                 viewModel.edit(post)
                 findNavController().navigate(
                     R.id.action_feedFragment_to_newPostFragment,
@@ -86,11 +80,6 @@ class FeedFragment : Fragment() {
             adapter.submitList(posts)
         }
 
-//        val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
-//            result ?: return@registerForActivityResult
-//            viewModel.changeContent(result)
-//            viewModel.save()
-//        }
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
