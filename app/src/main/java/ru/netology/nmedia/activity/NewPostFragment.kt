@@ -42,8 +42,12 @@ class NewPostFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val content = binding.editText.text.toString()
-                    viewModel.changeContent(content)
+                    if (viewModel.edited.value?.id == 0L) {
+                        val content = binding.editText.text.toString()
+                        viewModel.changeContent(content)
+                    } else {
+                        viewModel.clear()
+                    }
                     findNavController().navigateUp()
                 }
             }

@@ -46,6 +46,7 @@ class PostRepositorySQLiteImpl(private val dao: PostDao) : PostRepository {
     override fun save(post: Post) {
 //        val id = post.id
 //        val saved = dao.save(post)
+        dao.save(post)
         posts = dao.getAll()
 //        posts = if (id == 0L) {
 //            listOf(saved) + posts
