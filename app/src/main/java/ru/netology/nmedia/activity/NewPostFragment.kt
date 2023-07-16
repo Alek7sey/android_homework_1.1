@@ -8,7 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.utils.StringProperty
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -25,7 +24,9 @@ class NewPostFragment : Fragment() {
             binding.editText.setText(it)
         }
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-        binding.editText.setText(viewModel.edited.value?.content.toString())
+        if (binding.editText.text.isNullOrBlank()) {
+            binding.editText.setText(viewModel.edited.value?.content.toString())
+        }
         binding.editText.requestFocus()
         binding.btnOk.setOnClickListener {
             val content = binding.editText.text.toString()
