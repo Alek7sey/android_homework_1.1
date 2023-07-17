@@ -29,17 +29,21 @@ class PostRepositorySQLiteImpl(private val dao: PostDao) : PostRepository {
     }
 
     override fun shareById(id: Long) {
-
+        dao.shareById(id)
+        posts = dao.getAll()
+        data.value = posts
     }
 
     override fun viewById(id: Long) {
-
+        dao.viewById(id)
+        posts = dao.getAll()
+        data.value = posts
     }
 
     override fun removeById(id: Long) {
         dao.removeById(id)
         posts = dao.getAll()
-       // posts = posts.filter { it.id != id }
+        // posts = posts.filter { it.id != id }
         data.value = posts
     }
 

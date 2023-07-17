@@ -50,6 +50,7 @@ class PostViewHolder(
             likesButton.isChecked = post.likedByMe
             likesButton.text = clicksCount(post.likes)
             shareButton.text = clicksCount(post.shareCount)
+            viewsButton.text = clicksCount(post.viewsCount)
             if (post.linkVideo != null) {
                 groupVideo.visibility = View.VISIBLE
             } else {
@@ -77,6 +78,7 @@ class PostViewHolder(
             }
             likesButton.setOnClickListener { onInteractionListener.onLike(post) }
             shareButton.setOnClickListener { onInteractionListener.onShare(post) }
+            viewsButton.setOnClickListener { onInteractionListener.onViews(post) }
             groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
             root.setOnClickListener { onInteractionListener.onViewPost(post) }
         }
