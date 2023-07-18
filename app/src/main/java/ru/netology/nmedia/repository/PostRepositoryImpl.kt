@@ -17,11 +17,11 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override fun shareById(id: Long) {
-
+        dao.shareById(id)
     }
 
     override fun viewById(id: Long) {
-
+        dao.viewById(id)
     }
 
     override fun removeById(id: Long) {

@@ -30,12 +30,24 @@ interface PostDao {
     )
     fun likedById(id: Long)
 
+    @Query(
+        """
+            UPDATE PostEntity SET
+            shareCount = shareCount + 1
+             WHERE id = :id;
+        """
+    )
+    fun shareById(id: Long)
+
+    @Query(
+        """
+            UPDATE PostEntity SET
+            viewsCount = viewsCount + 1
+             WHERE id = :id;
+        """
+    )
+    fun viewById(id: Long)
+
     @Query("DELETE FROM PostEntity WHERE id = :id")
     fun removeById(id: Long)
 }
-//interface PostDao {
-//    fun getAll(): List<Post>
-//    fun save(post: Post): Post
-//    fun likeById(id: Long)
-//    fun removeById(id: Long)
-//}
