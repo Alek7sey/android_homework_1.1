@@ -1,11 +1,14 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
+import android.Manifest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
@@ -35,5 +38,31 @@ class AppActivity : AppCompatActivity() {
                 )
             }
         }
+        //checkGoogleApiAvailability()
+        requestNotificationPermission()
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        requestPermissions(arrayOf(permission), 1)
     }
 }
+//    private fun checkGoogleApiAvailability() {
+//        with(GoogleApiAvailability.getInstance()) {
+//            val code = isGooglePlayServicesAvailable(this@AppActivity)
+//            if (code == ConnectionResult.SUCCESS) {
+//                return@with
+//            }
+//            if (isUserResolvableError(code)) {
+//                getErrorDialog(this@AppActivity, code, 9000)?.show()
+//                return
+//            }
+//            Toast.makeText(this@AppActivity, "Google API Unavailable", Toast.LENGTH_SHORT).show()
+//        }
+//    }

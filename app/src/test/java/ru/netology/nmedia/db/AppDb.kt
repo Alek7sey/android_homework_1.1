@@ -13,17 +13,15 @@ abstract class AppDb : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var instance: AppDb? = null
+        private var instanse: AppDb? = null
 
         fun getInstance(context: Context): AppDb {
-            return instance ?: synchronized(this) {
-                instance ?: buildDatabase(context).also { instance = it }
+            return instanse ?: synchronized(this) {
+                instanse ?: buildDatabase(context).also { instanse = it }
             }
         }
-
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context, AppDb::class.java, "app.db")
-                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()
     }

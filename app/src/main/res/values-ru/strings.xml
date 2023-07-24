@@ -18,4 +18,9 @@
     <string name="chooser_share_post">Репост</string>
     <string name="title_youtube_video">Видео поста</string>
     <string name="url_is_null">Ссылка пустая (нулевая)</string>
+    <string name="google_play_unavailable">Google Api недоступен</string>
+    <string name="notification_user_liked">"Юзер %1$s лайкнул %2$s' пост "</string>
+    <string name="channel_remote_name">Уведомления сервера</string>
+    <string name="channel_remote_description">Уведомления с удаленного сервера</string>
+    <string name="notification_new_post">"%1$s опубликовал новый пост:"</string>
 </resources>
