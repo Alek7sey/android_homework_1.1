@@ -23,4 +23,7 @@
     <string name="channel_remote_name">Server notifications</string>
     <string name="channel_remote_description">Notifications from remote server</string>
     <string name="notification_new_post">%1$s posted a new post:</string>
+    <string name="empty">Empty</string>
+    <string name="network_error">Network error</string>
+    <string name="retry">Retry</string>
 </resources>

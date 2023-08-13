@@ -27,7 +27,7 @@ class PostFragment : Fragment() {
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val binding = FragmentPostBinding.inflate(layoutInflater, container, false)
         arguments?.textArg?.let {
-            postId = it.toString().toLong()
+            postId = it.toLong()
         }
 
         val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
@@ -71,12 +71,14 @@ class PostFragment : Fragment() {
                 findNavController().navigateUp()
             }
         })
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post: Post? = posts?.find { it.id == postId }
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val post: Post? = state.posts.find { it.id == postId }
             if (post != null) {
                 postViewHolder.bind(post)
             }
         }
+
         return binding.root
     }
 }

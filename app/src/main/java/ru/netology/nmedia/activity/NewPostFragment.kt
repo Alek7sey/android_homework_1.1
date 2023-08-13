@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
+
 import ru.netology.nmedia.utils.StringProperty
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -33,10 +34,15 @@ class NewPostFragment : Fragment() {
             if (content.isNotBlank()) {
                 viewModel.changeContent(content)
                 viewModel.save()
+            //    AndroidUtils.hideKeyboard(requireView())
             } else {
                 viewModel.clear()
                 binding.editText.clearFocus()
             }
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
 
