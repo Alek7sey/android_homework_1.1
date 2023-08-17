@@ -20,6 +20,8 @@ class AppActivity : AppCompatActivity() {
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        requestNotificationPermission()
+
         intent?.let {
             if (it.action == Intent.ACTION_SEND) {
                 val text = it.getStringExtra(Intent.EXTRA_TEXT)
@@ -39,7 +41,6 @@ class AppActivity : AppCompatActivity() {
             }
         }
         //checkGoogleApiAvailability()
-        requestNotificationPermission()
     }
 
     private fun requestNotificationPermission() {
@@ -53,16 +54,17 @@ class AppActivity : AppCompatActivity() {
         requestPermissions(arrayOf(permission), 1)
     }
 }
-//    private fun checkGoogleApiAvailability() {
-//        with(GoogleApiAvailability.getInstance()) {
-//            val code = isGooglePlayServicesAvailable(this@AppActivity)
-//            if (code == ConnectionResult.SUCCESS) {
-//                return@with
-//            }
-//            if (isUserResolvableError(code)) {
-//                getErrorDialog(this@AppActivity, code, 9000)?.show()
-//                return
-//            }
-//            Toast.makeText(this@AppActivity, "Google API Unavailable", Toast.LENGTH_SHORT).show()
+
+//private fun checkGoogleApiAvailability() {
+//    with(GoogleApiAvailability.getInstance()) {
+//        val code = isGooglePlayServicesAvailable(this@AppActivity)
+//        if (code == ConnectionResult.SUCCESS) {
+//            return@with
 //        }
+//        if (isUserResolvableError(code)) {
+//            getErrorDialog(this@AppActivity, code, 9000)?.show()
+//            return
+//        }
+//        Toast.makeText(this@AppActivity, "Google API Unavailable", Toast.LENGTH_SHORT).show()
 //    }
+//}
