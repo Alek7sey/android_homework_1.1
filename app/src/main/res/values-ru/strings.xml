@@ -26,4 +26,6 @@
     <string name="empty">Пусто</string>
     <string name="network_error">Ошибка сети</string>
     <string name="retry">Повторить</string>
+    <string name="post_attachment">Вложение</string>
+    <string name="video_post">Видео</string>
 </resources>

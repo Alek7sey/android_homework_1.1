@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -56,6 +57,26 @@ class PostViewHolder(
             } else {
                 groupVideo.visibility = View.GONE
             }
+
+            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+            Glide.with(binding.avatar)
+                .load(urlAvatar)
+                .circleCrop()
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .timeout(10_000)
+                .into(binding.avatar)
+
+            if (post.attachment !=null) {
+                val url = "http://10.0.2.2:9999/images/${post.attachment.url}"
+                Glide.with(binding.Attachment)
+                    .load(url)
+                    .timeout(10_000)
+                    .into(binding.Attachment)
+                Attachment.visibility = View.VISIBLE
+            } else {
+                Attachment.visibility = View.GONE
+            }
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_post)

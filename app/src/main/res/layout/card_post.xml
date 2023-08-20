@@ -14,7 +14,6 @@
         app:layout_constraintBottom_toBottomOf="@id/topBarrier"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground"
         tools:srcCompat="@sample/post.json/data/authorAvatar" />
 
     <com.google.android.material.button.MaterialButton
@@ -111,12 +110,19 @@
         tools:text="999,7K" />
 
     <ImageView
+        android:id="@+id/Attachment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/post_attachment"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:srcCompat="@drawable/post_video" />
+
+    <ImageView
         android:id="@+id/postVideo"
         android:layout_width="wrap_content"
-        android:layout_height="212dp"
-        android:layout_marginTop="@dimen/common_spacing"
-        android:contentDescription="video_post"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/video_post"
+        app:layout_constraintTop_toBottomOf="@id/Attachment"
         app:srcCompat="@drawable/post_video" />
 
     <ImageView
@@ -124,6 +130,7 @@
         android:layout_width="@dimen/post_avatar_size"
         android:layout_height="@dimen/post_avatar_size"
         app:layout_constraintBottom_toBottomOf="@+id/postVideo"
+        android:contentDescription="icon_play"
         app:layout_constraintEnd_toEndOf="@+id/postVideo"
         app:layout_constraintStart_toStartOf="@+id/postVideo"
         app:layout_constraintTop_toTopOf="@+id/postVideo"
