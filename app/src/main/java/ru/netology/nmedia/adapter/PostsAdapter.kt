@@ -76,7 +76,10 @@ class PostViewHolder(
                     }
                 }.show()
             }
-            likesButton.setOnClickListener { onInteractionListener.onLike(post) }
+            likesButton.setOnClickListener {
+                likesButton.isChecked = !likesButton.isChecked
+                onInteractionListener.onLike(post)
+            }
             shareButton.setOnClickListener { onInteractionListener.onShare(post) }
             viewsButton.setOnClickListener { onInteractionListener.onViews(post) }
             groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
