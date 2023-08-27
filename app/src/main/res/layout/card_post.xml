@@ -114,6 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/post_attachment"
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toBottomOf="@id/content"
         app:srcCompat="@drawable/post_video" />
 

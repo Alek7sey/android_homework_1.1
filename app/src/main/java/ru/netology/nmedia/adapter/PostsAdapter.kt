@@ -1,5 +1,6 @@
 package ru.netology.nmedia.adapter
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -66,7 +69,7 @@ class PostViewHolder(
                 .timeout(10_000)
                 .into(binding.avatar)
 
-            if (post.attachment !=null) {
+            if (post.attachment != null) {
                 val url = "http://10.0.2.2:9999/images/${post.attachment.url}"
                 Glide.with(binding.Attachment)
                     .load(url)
