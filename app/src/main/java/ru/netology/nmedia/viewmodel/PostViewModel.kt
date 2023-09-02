@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
+import java.io.IOException
 
 
 private val empty = Post(
@@ -27,6 +29,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val data: LiveData<FeedModel> = _data
     val edited = MutableLiveData(empty)
 
+    val toastServerError: Toast = Toast.makeText(getApplication(), "Server is not responding. Try again.", Toast.LENGTH_LONG)
+    val toastConverterError: Toast = Toast.makeText(getApplication(), "Conversion issue! Big problems!", Toast.LENGTH_LONG)
+
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit> = _postCreated
 
@@ -35,14 +40,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPosts() {
-        _data.postValue(FeedModel(loading = true))
+        _data.value = FeedModel(loading = true)
         repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+                _data.value = FeedModel(posts = posts, empty = posts.isEmpty())
             }
 
-            override fun onError() {
-                _data.postValue(FeedModel(error = true))
+            override fun onError(e: Exception) {
+                if (e is IOException) {
+                    _data.value = FeedModel(error = true)
+                } else {
+                    toastConverterError.show()
+                }
+
             }
         })
     }
@@ -59,11 +69,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                         it
                     }
                 }.orEmpty()
-                _data.postValue(_data.value?.copy(posts = updatedPosts))
+                _data.value = _data.value?.copy(posts = updatedPosts)
             }
 
-            override fun onError() {
-                _data.postValue(FeedModel(error = true))
+            override fun onError(e: Exception) {
+                toastServerError.show()
+                _data.value = FeedModel(error = true)
             }
         })
 
@@ -73,16 +84,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun viewById(id: Long) = repository.viewById(id)
 
     fun save() {
-        _data.postValue(FeedModel(refreshing = true))
+        _data.value = FeedModel(refreshing = true)
         edited.value?.let {
-            repository.save(it, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(posts: Unit) {
-                    edited.postValue(empty)
-                    _postCreated.postValue(Unit)
+            repository.save(it, object : PostRepository.Callback<Post> {
+                override fun onSuccess(posts: Post) {
+                    edited.value = empty
+                    _postCreated.value = Unit
                 }
 
-                override fun onError() {
-                    _data.postValue(FeedModel(error = true))
+                override fun onError(e: Exception) {
+                    _data.value = FeedModel(error = true)
+                    toastServerError.show()
                 }
             })
         }
@@ -100,22 +112,22 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-        _data.postValue(FeedModel(refreshing = true))
+        _data.value = FeedModel(refreshing = true)
         repository.removeById(id, object : PostRepository.Callback<Unit> {
             val oldPosts = _data.value
             override fun onSuccess(posts: Unit) {
-                _data.postValue(
+                _data.value =
                     oldPosts?.copy(
                         posts = oldPosts.posts.filter {
                             it.id != id
                         }
                     )
-                )
             }
 
-            override fun onError() {
-                _data.postValue(oldPosts)
-                _data.postValue(FeedModel(error = true))
+            override fun onError(e: Exception) {
+                toastServerError.show()
+                _data.value = oldPosts
+                _data.value = FeedModel(error = true)
             }
         })
     }
