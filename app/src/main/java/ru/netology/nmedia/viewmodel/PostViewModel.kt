@@ -49,6 +49,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             override fun onError(e: Exception) {
                 if (e is IOException) {
                     _data.value = FeedModel(error = true)
+                    toastServerError.show()
                 } else {
                     toastConverterError.show()
                 }
@@ -74,7 +75,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
             override fun onError(e: Exception) {
                 toastServerError.show()
-                _data.value = FeedModel(error = true)
             }
         })
 
