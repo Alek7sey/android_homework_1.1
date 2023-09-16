@@ -16,6 +16,17 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@sample/post.json/data/authorAvatar" />
 
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:text="@string/send"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/viewsButton"
+        app:layout_constraintStart_toEndOf="@id/shareButton"
+        app:layout_constraintTop_toBottomOf="@+id/postVideo" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
         style="@style/Widget.AppTheme.MenuButton"
@@ -113,8 +124,8 @@
         android:id="@+id/Attachment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/post_attachment"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/post_attachment"
         app:layout_constraintTop_toBottomOf="@id/content"
         app:srcCompat="@drawable/post_video" />
 
@@ -130,8 +141,8 @@
         android:id="@+id/iconPlay"
         android:layout_width="@dimen/post_avatar_size"
         android:layout_height="@dimen/post_avatar_size"
-        app:layout_constraintBottom_toBottomOf="@+id/postVideo"
         android:contentDescription="icon_play"
+        app:layout_constraintBottom_toBottomOf="@+id/postVideo"
         app:layout_constraintEnd_toEndOf="@+id/postVideo"
         app:layout_constraintStart_toStartOf="@+id/postVideo"
         app:layout_constraintTop_toTopOf="@+id/postVideo"

@@ -70,6 +70,10 @@ class PostFragment : Fragment() {
                 viewModel.removeById(post.id)
                 findNavController().navigateUp()
             }
+
+            override fun onSend(post: Post) {
+                viewModel.send(post)
+            }
         })
 
         viewModel.data.observe(viewLifecycleOwner) { state ->

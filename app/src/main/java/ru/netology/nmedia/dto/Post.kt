@@ -4,6 +4,8 @@ import ru.netology.nmedia.enumeration.AttachmentType
 
 data class Post(
     val id: Long,
+    val localId: Long,
+    var unposted: Int = 0,
     val author: String,
     val authorAvatar: String? = null,
     val content: String,

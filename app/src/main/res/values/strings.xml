@@ -29,4 +29,5 @@
     <string name="post_attachment">postAttachment</string>
     <string name="video_post">video_post</string>
     <string name="error_loading">Error loading data</string>
+    <string name="send">send</string>
 </resources>

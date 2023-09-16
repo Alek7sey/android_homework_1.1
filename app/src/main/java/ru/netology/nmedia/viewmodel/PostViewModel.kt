@@ -1,7 +1,6 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +18,7 @@ import ru.netology.nmedia.utils.SingleLiveEvent
 
 private val empty = Post(
     id = 0,
+    localId = 0,
     content = "",
     author = "",
     authorAvatar = "",
@@ -101,6 +101,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     repository.save(it)
                     _state.value = FeedModelState()
+
                 } catch (e: Exception) {
                     _state.value = FeedModelState(error = true)
                 }
@@ -108,6 +109,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         }
         clear()
+    }
+
+    fun send(post: Post) {
+        viewModelScope.launch {
+            _state.value = try {
+                repository.send(post)
+                FeedModelState()
+            } catch (e: Exception) {
+                FeedModelState(error = true)
+            }
+        }
     }
 
     fun edit(post: Post) {
@@ -131,6 +143,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 FeedModelState(error = true)
             }
         }
+
 //        _data.value = FeedModel(refreshing = true)
 //        repository.removeById(id, object : PostRepository.Callback<Unit> {
 //            val oldPosts = _data.value
