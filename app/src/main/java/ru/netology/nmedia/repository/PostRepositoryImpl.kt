@@ -1,13 +1,19 @@
 package ru.netology.nmedia.repository
 
-
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
+import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.error.ApiError
+import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
@@ -16,19 +22,44 @@ class PostRepositoryImpl(
     private val dao: PostDao
 ) : PostRepository {
 
-    override val data: LiveData<List<Post>> = dao.getAll()
+    override val data = dao.getAll()
         .map {
             it.map(PostEntity::toDto)
         }
+        .flowOn(Dispatchers.Default)
+
+    override fun getNewerCount(postId: Long): Flow<Int> = flow {
+        while (true) {
+            delay(10_000L)
+            val response = PostApi.service.getNewer(postId)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            //  emit(body.size)
+            dao.insert(body.toEntity().map {
+                it.copy(hidden = true)
+            })
+            emit(dao.unreadCount())
+        }
+
+    }
+        .catch { e -> throw AppError.from(e) }
+        .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
-        val postResponse = PostApi.service.getAll()
-        if (!postResponse.isSuccessful) {
-            throw java.lang.RuntimeException(postResponse.errorBody()?.string())
+        val response = PostApi.service.getAll()
+        if (!response.isSuccessful) {
+            throw ApiError(response.code(), response.message())
         }
-        val posts = postResponse.body() ?: throw java.lang.RuntimeException("body is null")
+        val posts = response.body() ?: throw ApiError(response.code(), response.message())
         dao.removeAll()
         dao.insert(posts.map(PostEntity::fromDto))
+    }
+
+    override suspend fun readAll() {
+        dao.readAll()
     }
 
     override suspend fun removeById(id: Long) {
@@ -63,6 +94,7 @@ class PostRepositoryImpl(
     override suspend fun save(post: Post) {
         try {
             post.unposted = 1
+          //  val maxId = dao.maxId().toLong()
             dao.insert(PostEntity.fromDto(post))
             val response = PostApi.service.savePost(post)
             if (!response.isSuccessful) {
@@ -121,15 +153,15 @@ class PostRepositoryImpl(
         }
     }
 
-    override suspend fun shareById(id: Long): Post? {
-        val post = data.value?.get(id.toInt())
-//        dao.shareById(id)
-        return post
-    }
+    /*    override suspend fun shareById(id: Long): Post? {
+            val post = data.
+    //        dao.shareById(id)
+            return post
+        }
 
-    override suspend fun viewById(id: Long): Post? {
-        val post = data.value?.get(id.toInt())
-//        dao.viewById(id)
-        return post
-    }
+        override suspend fun viewById(id: Long): Post? {
+            val post = data.value?.get(id.toInt())
+    //        dao.viewById(id)
+            return post
+        }*/
 }

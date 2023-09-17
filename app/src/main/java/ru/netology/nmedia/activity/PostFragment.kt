@@ -53,7 +53,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onViews(post: Post) {
-                viewModel.viewById(post.id)
+         //       viewModel.viewById(post.id)
             }
 
             override fun onEdit(post: Post) {

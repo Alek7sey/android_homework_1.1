@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -42,11 +43,11 @@ class FeedFragment : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-                viewModel.shareById(post.id)
+                //  viewModel.shareById(post.id)
             }
 
             override fun onViews(post: Post) {
-                viewModel.viewById(post.id)
+                //     viewModel.viewById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -89,11 +90,11 @@ class FeedFragment : Fragment() {
             binding.progress.isVisible = state.loading
             binding.swipeRefreshLayout.isRefreshing = state.refreshing
             if (state.error) {
-              //  Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
-              //      .setAction(R.string.retry) {
-               //         viewModel.loadPosts()
-               //     }
-               //     .show()
+                //  Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+                //      .setAction(R.string.retry) {
+                //         viewModel.loadPosts()
+                //     }
+                //     .show()
             }
             //  binding.progress.isVisible = state.loading
         }
@@ -109,8 +110,29 @@ class FeedFragment : Fragment() {
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
-        return binding.root
 
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            //Log.d("FeedFragment", "Newer count : $it")
+            if (it > 0 ) {
+                binding.loadNewPosts.visibility = View.VISIBLE
+                binding.loadNewPosts.text = "load new posts $it"
+            }
+        }
+
+        binding.loadNewPosts.setOnClickListener {
+            viewModel.readAll()
+            binding.loadNewPosts.visibility = View.GONE
+        }
+
+        adapter.registerAdapterDataObserver(object: AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
+
+        return binding.root
 
     }
 }
