@@ -1,6 +1,5 @@
 package ru.netology.nmedia.adapter
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -25,6 +22,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onRunVideo(post: Post) {}
     fun onViewPost(post: Post) {}
+    fun onSend(post: Post) {}
 }
 
 class PostsAdapter(
@@ -59,6 +57,11 @@ class PostViewHolder(
                 groupVideo.visibility = View.VISIBLE
             } else {
                 groupVideo.visibility = View.GONE
+            }
+            if (post.unposted == 1) {
+               send.visibility = View.VISIBLE
+            } else {
+                send.visibility = View.GONE
             }
 
             val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
@@ -108,6 +111,7 @@ class PostViewHolder(
             viewsButton.setOnClickListener { onInteractionListener.onViews(post) }
             groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
             root.setOnClickListener { onInteractionListener.onViewPost(post) }
+            send.setOnClickListener { onInteractionListener.onSend(post) }
         }
     }
 }

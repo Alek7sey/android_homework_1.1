@@ -28,4 +28,6 @@
     <string name="retry">Повторить</string>
     <string name="post_attachment">Вложение</string>
     <string name="video_post">Видео</string>
+    <string name="error_loading">Ошибка загурзки данных</string>
+    <string name="send">Отправить</string>
 </resources>

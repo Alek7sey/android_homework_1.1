@@ -33,7 +33,7 @@ class PostFragment : Fragment() {
         val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -69,6 +69,10 @@ class PostFragment : Fragment() {
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
                 findNavController().navigateUp()
+            }
+
+            override fun onSend(post: Post) {
+                viewModel.send(post)
             }
         })
 

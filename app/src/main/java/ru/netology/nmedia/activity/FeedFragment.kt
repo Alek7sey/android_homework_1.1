@@ -30,7 +30,7 @@ class FeedFragment : Fragment() {
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -60,7 +60,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
+                viewModel.removeById(post.localId)
             }
 
             override fun onRunVideo(post: Post) {
@@ -73,14 +73,29 @@ class FeedFragment : Fragment() {
                     R.id.action_feedFragment_to_postFragment,
                     Bundle().apply { textArg = post.id.toString() })
             }
+
+            override fun onSend(post: Post) {
+                viewModel.send(post)
+            }
         })
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
-            binding.progress.isVisible = state.loading
             adapter.submitList(state.posts)
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            binding.progress.isVisible = state.loading
+            binding.swipeRefreshLayout.isRefreshing = state.refreshing
+            if (state.error) {
+              //  Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+              //      .setAction(R.string.retry) {
+               //         viewModel.loadPosts()
+               //     }
+               //     .show()
+            }
+            //  binding.progress.isVisible = state.loading
         }
 
         binding.retry.setOnClickListener {
@@ -88,10 +103,8 @@ class FeedFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadPosts()
-            binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.refreshPosts()
         }
-
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
