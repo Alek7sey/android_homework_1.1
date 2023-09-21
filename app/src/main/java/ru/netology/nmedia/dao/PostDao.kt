@@ -13,7 +13,7 @@ interface PostDao {
     fun getAll(): LiveData<List<PostEntity>>
 
     @Query("SELECT * FROM PostEntity WHERE localId = :localId")
-    fun searchPost(localId: Long): PostEntity
+    suspend fun searchPost(localId: Long): PostEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
