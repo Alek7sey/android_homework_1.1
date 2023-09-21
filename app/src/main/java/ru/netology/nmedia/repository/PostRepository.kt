@@ -9,7 +9,7 @@ interface PostRepository {
 
     suspend fun shareById(id: Long): Post?
     suspend fun viewById(id: Long): Post?
-    suspend fun removeById(id: Long)
+    suspend fun removeById(localId: Long)
     suspend fun save(post: Post)
     suspend fun likeById(post: Post)
     suspend fun send(post: Post)

@@ -60,6 +60,8 @@ class PostViewHolder(
             }
             if (post.unposted == 1) {
                send.visibility = View.VISIBLE
+            } else {
+                send.visibility = View.GONE
             }
 
             val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"

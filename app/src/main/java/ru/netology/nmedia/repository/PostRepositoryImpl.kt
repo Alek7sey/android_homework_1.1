@@ -3,6 +3,7 @@ package ru.netology.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
@@ -31,16 +32,20 @@ class PostRepositoryImpl(
         dao.insert(posts.map(PostEntity::fromDto))
     }
 
-    override suspend fun removeById(id: Long) {
+    override suspend fun removeById(localId: Long) {
+
+        val post = dao.searchPost(localId)
         try {
-            dao.removeById(id)
-            val response = PostApi.service.deletePost(id)
+            dao.removeBylocalId(localId)
+            val response = PostApi.service.deletePost(post.id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
+            dao.insert(post)
             throw NetworkError
         } catch (e: Exception) {
+            dao.insert(post)
             throw UnknownError
         }
     }
@@ -86,7 +91,7 @@ class PostRepositoryImpl(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.removeById(post.localId)
+            dao.removeBylocalId(post.localId)
             dao.insert(PostEntity.fromDto(body))
 
         } catch (e: IOException) {

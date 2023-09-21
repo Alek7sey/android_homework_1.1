@@ -12,6 +12,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getAll(): LiveData<List<PostEntity>>
 
+    @Query("SELECT * FROM PostEntity WHERE localId = :localId")
+    fun searchPost(localId: Long): PostEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 
@@ -48,6 +51,9 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
+
+    @Query("DELETE FROM PostEntity WHERE localId = :localId")
+    suspend fun removeBylocalId(localId: Long)
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAll()
