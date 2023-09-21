@@ -61,7 +61,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
+                viewModel.removeById(post.localId)
             }
 
             override fun onRunVideo(post: Post) {
