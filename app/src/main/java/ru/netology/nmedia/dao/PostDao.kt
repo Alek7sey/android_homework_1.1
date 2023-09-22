@@ -15,6 +15,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE localId = :localId")
     suspend fun searchPost(localId: Long): PostEntity
 
+    @Query("SELECT * FROM PostEntity WHERE id = :id")
+    suspend fun searchPostById(id: Long): PostEntity
+
     @Query("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean
 
@@ -29,9 +32,6 @@ interface PostDao {
 
     @Query("UPDATE PostEntity SET hidden = 0")
     suspend fun readAll()
-
-//    @Query("SELECT * FROM PostEntity WHERE localId = :localId")
-//    suspend fun searchPost(localId: Long): PostEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)

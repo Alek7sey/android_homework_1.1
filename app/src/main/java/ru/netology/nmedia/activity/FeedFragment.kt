@@ -116,6 +116,8 @@ class FeedFragment : Fragment() {
             if (it > 0 ) {
                 binding.loadNewPosts.visibility = View.VISIBLE
                 binding.loadNewPosts.text = "load new posts $it"
+            } else {
+                binding.loadNewPosts.visibility = View.GONE
             }
         }
 

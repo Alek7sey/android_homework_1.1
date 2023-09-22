@@ -38,12 +38,12 @@ class PostRepositoryImpl(
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             //  emit(body.size)
+            emit(dao.unreadCount())
+
             dao.insert(body.toEntity().map {
                 it.copy(hidden = true)
             })
-            emit(dao.unreadCount())
         }
-
     }
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
@@ -62,16 +62,20 @@ class PostRepositoryImpl(
         dao.readAll()
     }
 
-    override suspend fun removeById(id: Long) {
+    override suspend fun removeById(localId: Long) {
+
+        val post = dao.searchPost(localId)
         try {
-            dao.removeById(id)
-            val response = PostApi.service.deletePost(id)
+            dao.removeBylocalId(localId)
+            val response = PostApi.service.deletePost(post.id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
+            dao.insert(post)
             throw NetworkError
         } catch (e: Exception) {
+            dao.insert(post)
             throw UnknownError
         }
     }
