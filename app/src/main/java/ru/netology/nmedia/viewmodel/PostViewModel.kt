@@ -102,7 +102,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /*    fun shareById(id: Long) {
+        fun shareById(id: Long) {
             viewModelScope.launch {
                 _state.value = FeedModelState(refreshing = true)
                 repository.shareById(id)
@@ -114,7 +114,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.value = FeedModelState(refreshing = true)
                 repository.viewById(id)
             }
-        }*/
+        }
 
     fun save() {
         edited.value?.let {
@@ -155,11 +155,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun removeById(localId: Long) {
+    fun removeById(id: Long) {
         viewModelScope.launch {
             _state.value = FeedModelState(refreshing = true)
             _state.value = try {
-                repository.removeById(localId)
+                repository.removeById(id)
                 FeedModelState()
             } catch (e: Exception) {
                 FeedModelState(error = true)

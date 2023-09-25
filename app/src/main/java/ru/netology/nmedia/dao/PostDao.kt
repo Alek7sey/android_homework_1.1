@@ -70,12 +70,8 @@ interface PostDao {
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
 
-    @Query("DELETE FROM PostEntity WHERE localId = :localId")
-    suspend fun removeBylocalId(localId: Long)
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAll()
 
-//    @Query("SELECT id FROM PostEntity WHERE localId = :localId")
-//    suspend fun findId(localId: Long): Long
 }

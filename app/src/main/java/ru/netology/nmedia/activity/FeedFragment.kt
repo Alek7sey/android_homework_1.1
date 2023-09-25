@@ -43,11 +43,11 @@ class FeedFragment : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-                //  viewModel.shareById(post.id)
+                viewModel.shareById(post.id)
             }
 
             override fun onViews(post: Post) {
-                //     viewModel.viewById(post.id)
+                viewModel.viewById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -61,7 +61,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.localId)
+                viewModel.removeById(post.id)
             }
 
             override fun onRunVideo(post: Post) {
@@ -113,7 +113,7 @@ class FeedFragment : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
             //Log.d("FeedFragment", "Newer count : $it")
-            if (it > 0 ) {
+            if (it > 0) {
                 binding.loadNewPosts.visibility = View.VISIBLE
                 binding.loadNewPosts.text = "load new posts $it"
             } else {
@@ -126,7 +126,7 @@ class FeedFragment : Fragment() {
             binding.loadNewPosts.visibility = View.GONE
         }
 
-        adapter.registerAdapterDataObserver(object: AdapterDataObserver() {
+        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
                     binding.list.smoothScrollToPosition(0)
