@@ -1,19 +1,37 @@
 package ru.netology.nmedia.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-    fun getAll(): LiveData<List<PostEntity>>
+    @Query("SELECT * FROM PostEntity WHERE hidden == 0 ORDER BY id DESC")
+    fun getAll(): Flow<List<PostEntity>>
 
     @Query("SELECT * FROM PostEntity WHERE localId = :localId")
     suspend fun searchPost(localId: Long): PostEntity
+
+    @Query("SELECT * FROM PostEntity WHERE id = :id")
+    suspend fun searchPostById(id: Long): PostEntity
+
+    @Query("SELECT COUNT(*) == 0 FROM PostEntity")
+    suspend fun isEmpty(): Boolean
+
+    @Query("SELECT MAX(id) FROM PostEntity")
+    suspend fun maxId(): Int
+
+    @Query("SELECT COUNT(*) FROM PostEntity WHERE hidden == 1")
+    suspend fun unreadCount(): Int
+
+    @Query("SELECT COUNT(*) FROM PostEntity WHERE hidden == 1")
+    fun observeCount(): Flow<Int>
+
+    @Query("UPDATE PostEntity SET hidden = 0")
+    suspend fun readAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
@@ -52,12 +70,8 @@ interface PostDao {
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
 
-    @Query("DELETE FROM PostEntity WHERE localId = :localId")
-    suspend fun removeBylocalId(localId: Long)
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAll()
 
-//    @Query("SELECT id FROM PostEntity WHERE localId = :localId")
-//    suspend fun findId(localId: Long): Long
 }

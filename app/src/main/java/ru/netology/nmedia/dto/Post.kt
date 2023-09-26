@@ -11,6 +11,7 @@ data class Post(
     val content: String,
     val published: String,
     val likes: Int = 0,
+    val hidden: Boolean = false,
     val shareCount: Int = 0,
     val viewsCount: Int = 0,
     val likedByMe: Boolean,

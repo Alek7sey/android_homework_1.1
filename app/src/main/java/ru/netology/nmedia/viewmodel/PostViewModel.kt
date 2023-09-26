@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
@@ -29,9 +32,17 @@ private val empty = Post(
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: PostRepository = PostRepositoryImpl(AppDb.getInstance(application).postDao())
-    val data: LiveData<FeedModel> = repository.data.map {
-        FeedModel(it, it.isEmpty())
+    val data: LiveData<FeedModel> = repository.data
+        .map {
+            FeedModel(it, it.isEmpty())
+        }
+        .asLiveData(Dispatchers.Default)
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        val firstId = it.posts.firstOrNull()?.id ?: 0L
+        repository.getNewerCount(firstId).asLiveData(Dispatchers.Default)
     }
+
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
@@ -68,6 +79,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun readAll() =
+        viewModelScope.launch {
+            _state.value = FeedModelState(refreshing = true)
+            _state.value = try {
+                repository.readAll()
+                FeedModelState()
+            } catch (e: Exception) {
+                FeedModelState(error = true)
+            }
+        }
+
     fun likeById(post: Post) {
         viewModelScope.launch {
             _state.value = FeedModelState(refreshing = true)
@@ -80,19 +102,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun shareById(id: Long) {
-        viewModelScope.launch {
-            _state.value = FeedModelState(refreshing = true)
-            repository.shareById(id)
+        fun shareById(id: Long) {
+            viewModelScope.launch {
+                _state.value = FeedModelState(refreshing = true)
+                repository.shareById(id)
+            }
         }
-    }
 
-    fun viewById(id: Long) {
-        viewModelScope.launch {
-            _state.value = FeedModelState(refreshing = true)
-            repository.viewById(id)
+        fun viewById(id: Long) {
+            viewModelScope.launch {
+                _state.value = FeedModelState(refreshing = true)
+                repository.viewById(id)
+            }
         }
-    }
 
     fun save() {
         edited.value?.let {
@@ -133,11 +155,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun removeById(localId: Long) {
+    fun removeById(id: Long) {
         viewModelScope.launch {
             _state.value = FeedModelState(refreshing = true)
             _state.value = try {
-                repository.removeById(localId)
+                repository.removeById(id)
                 FeedModelState()
             } catch (e: Exception) {
                 FeedModelState(error = true)
