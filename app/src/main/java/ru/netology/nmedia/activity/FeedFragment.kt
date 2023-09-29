@@ -61,7 +61,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.localId)
+                viewModel.removeById(post.id)
             }
 
             override fun onRunVideo(post: Post) {
@@ -77,6 +77,12 @@ class FeedFragment : Fragment() {
 
             override fun onSend(post: Post) {
                 viewModel.send(post)
+            }
+
+            override fun onImage(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_imageFragment,
+                    Bundle().apply { putString("urlAttach", post.attachment?.url) })
             }
         })
 
@@ -113,7 +119,7 @@ class FeedFragment : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
             //Log.d("FeedFragment", "Newer count : $it")
-            if (it > 0 ) {
+            if (it > 0) {
                 binding.loadNewPosts.visibility = View.VISIBLE
                 binding.loadNewPosts.text = "load new posts $it"
             } else {
@@ -126,7 +132,7 @@ class FeedFragment : Fragment() {
             binding.loadNewPosts.visibility = View.GONE
         }
 
-        adapter.registerAdapterDataObserver(object: AdapterDataObserver() {
+        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
                     binding.list.smoothScrollToPosition(0)

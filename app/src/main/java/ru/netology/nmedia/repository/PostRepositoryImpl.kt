@@ -68,12 +68,11 @@ class PostRepositoryImpl(
         dao.readAll()
     }
 
-    override suspend fun removeById(localId: Long) {
-
-        val post = dao.searchPost(localId)
+    override suspend fun removeById(id: Long) {
+       val post = dao.searchPost(id)
         try {
-            dao.removeBylocalId(localId)
-            val response = PostApi.service.deletePost(post.id)
+            dao.removeById(id)
+            val response = PostApi.service.deletePost(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

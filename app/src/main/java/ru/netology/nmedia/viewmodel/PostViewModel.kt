@@ -20,8 +20,6 @@ import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.File
-import java.net.URI
-
 
 private val empty = Post(
     id = 0,
@@ -138,7 +136,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope.launch {
                 try {
                     photo.value?.let {
-                        repository.saveWithAttachment(post, it)
+                        repository.
+                        saveWithAttachment(post, it)
                     } ?: repository.save(post)
                     _postCreated.value = Unit
                     clear()
@@ -172,11 +171,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun removeById(localId: Long) {
+    fun removeById(id: Long) {
         viewModelScope.launch {
             _state.value = FeedModelState(refreshing = true)
             _state.value = try {
-                repository.removeById(localId)
+                repository.removeById(id)
                 FeedModelState()
             } catch (e: Exception) {
                 FeedModelState(error = true)
