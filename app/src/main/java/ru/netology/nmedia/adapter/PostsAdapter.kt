@@ -74,12 +74,11 @@ class PostViewHolder(
                 .into(binding.avatar)
 
             if (post.attachment != null) {
-                //val url = "http://10.0.2.2:9999/images/${post.attachment.url}"
                 val url = "http://10.0.2.2:9999/media/${post.attachment.url}"
                 Glide.with(binding.attachment)
                     .load(url)
                     .timeout(10_000)
-                    .centerCrop()
+                    .centerInside()
                     .into(binding.attachment)
                 attachment.visibility = View.VISIBLE
             } else {

@@ -32,4 +32,5 @@
     <string name="send">send</string>
     <string name="new_posts">new posts</string>
     <string name="remove">Remove</string>
+    <string name="image">image</string>
 </resources>

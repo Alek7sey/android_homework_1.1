@@ -45,7 +45,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.getNewerCount(firstId).asLiveData(Dispatchers.Default)
     }
 
-    private val _state = MutableLiveData(FeedModelState())
+    private val _state = MutableLiveData<FeedModelState>()
     val state: LiveData<FeedModelState>
         get() = _state
     private val _photo = MutableLiveData<PhotoModel?>()
