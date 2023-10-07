@@ -33,4 +33,10 @@
     <string name="new_posts">Показать новые посты</string>
     <string name="remove">Удалить</string>
     <string name="image">Картинка</string>
+    <string name="logout">Выйти</string>
+    <string name="aut">Войти</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="login">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="input">Войти</string>
 </resources>

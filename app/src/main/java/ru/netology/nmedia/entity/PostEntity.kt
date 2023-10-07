@@ -10,6 +10,7 @@ import ru.netology.nmedia.dto.Post
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
+    val authorId: Long,
     val localId: Long,
     val unposted: Int = 0,
     val author: String,
@@ -27,39 +28,41 @@ data class PostEntity(
 ) {
     fun toDto() =
         Post(
-            id,
-            localId,
-            unposted,
-            author,
-            authorAvatar,
-            content,
-            published,
-            likes,
-            hidden,
-            shareCount,
-            viewsCount,
-            likedByMe,
-            linkVideo,
-            attachment
+            id = id,
+            authorId = authorId,
+            localId = localId,
+            unposted = unposted,
+            author = author,
+            authorAvatar = authorAvatar,
+            content = content,
+            published = published,
+            likes = likes,
+            hidden = hidden,
+            shareCount = shareCount,
+            viewsCount = viewsCount,
+            likedByMe = likedByMe,
+            linkVideo = linkVideo,
+            attachment = attachment
         )
 
     companion object {
         fun fromDto(dto: Post) =
             PostEntity(
-                dto.id,
-                dto.localId,
-                dto.unposted,
-                dto.author,
-                dto.authorAvatar,
-                dto.content,
-                dto.published,
-                dto.likes,
-                dto.hidden,
-                dto.shareCount,
-                dto.viewsCount,
-                dto.likedByMe,
-                dto.linkVideo,
-                dto.attachment
+                id = dto.id,
+                authorId = dto.authorId,
+                localId = dto.localId,
+                unposted = dto.unposted,
+                author = dto.author,
+                authorAvatar = dto.authorAvatar,
+                content = dto.content,
+                published = dto.published,
+                likes = dto.likes,
+                hidden = dto.hidden,
+                shareCount = dto.shareCount,
+                viewsCount = dto.viewsCount,
+                likedByMe = dto.likedByMe,
+                linkVideo = dto.linkVideo,
+                attachment = dto.attachment
             )
     }
 }

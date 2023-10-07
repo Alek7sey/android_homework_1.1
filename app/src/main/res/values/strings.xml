@@ -33,4 +33,10 @@
     <string name="new_posts">new posts</string>
     <string name="remove">Remove</string>
     <string name="image">image</string>
+    <string name="logout">logout</string>
+    <string name="aut">Aut</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="input">input</string>
 </resources>
