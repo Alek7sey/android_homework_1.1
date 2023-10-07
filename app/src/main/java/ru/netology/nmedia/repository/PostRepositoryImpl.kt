@@ -7,15 +7,21 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toEntity
+import ru.netology.nmedia.enumeration.AttachmentType
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
 
 class PostRepositoryImpl(
@@ -62,11 +68,11 @@ class PostRepositoryImpl(
         dao.readAll()
     }
 
-    override suspend fun removeById(id: Long) {
+    override suspend fun removeById(localId: Long) {
 
-        val post = dao.searchPost(id)
+        val post = dao.searchPost(localId)
         try {
-            dao.removeById(id)
+            dao.removeBylocalId(localId)
             val response = PostApi.service.deletePost(post.id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -98,7 +104,7 @@ class PostRepositoryImpl(
     override suspend fun save(post: Post) {
         try {
             post.unposted = 1
-            //  val maxId = dao.maxId().toLong()
+          //  val maxId = dao.maxId().toLong()
             dao.insert(PostEntity.fromDto(post))
             val response = PostApi.service.savePost(post)
             if (!response.isSuccessful) {
@@ -157,13 +163,15 @@ class PostRepositoryImpl(
         }
     }
 
-    override suspend fun shareById(id: Long) {
-        dao.shareById(id)
-        // на сервере нет подобной функции
-    }
+    /*    override suspend fun shareById(id: Long): Post? {
+            val post = data.
+    //        dao.shareById(id)
+            return post
+        }
 
-    override suspend fun viewById(id: Long) {
-        dao.viewById(id)
-        // на сервере нет подобной функции
-    }
+        override suspend fun viewById(id: Long): Post? {
+            val post = data.value?.get(id.toInt())
+    //        dao.viewById(id)
+            return post
+        }*/
 }
