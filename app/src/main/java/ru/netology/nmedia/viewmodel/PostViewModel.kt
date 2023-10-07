@@ -117,7 +117,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /*    fun shareById(id: Long) {
+        fun shareById(id: Long) {
             viewModelScope.launch {
                 _state.value = FeedModelState(refreshing = true)
                 repository.shareById(id)
@@ -129,7 +129,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.value = FeedModelState(refreshing = true)
                 repository.viewById(id)
             }
-        }*/
+        }
 
     fun save() {
         edited.value?.let { post ->

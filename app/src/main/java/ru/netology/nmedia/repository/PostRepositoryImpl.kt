@@ -73,6 +73,7 @@ class PostRepositoryImpl(
         try {
             dao.removeById(id)
             val response = PostApi.service.deletePost(id)
+
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -195,15 +196,13 @@ class PostRepositoryImpl(
         }
     }
 
-    /*    override suspend fun shareById(id: Long): Post? {
-            val post = data.
-    //        dao.shareById(id)
-            return post
-        }
+    override suspend fun shareById(id: Long) {
+        dao.shareById(id)
+        // на сервере нет подобной функции
+    }
 
-        override suspend fun viewById(id: Long): Post? {
-            val post = data.value?.get(id.toInt())
-    //        dao.viewById(id)
-            return post
-        }*/
+    override suspend fun viewById(id: Long) {
+        dao.viewById(id)
+        // на сервере нет подобной функции
+    }
 }

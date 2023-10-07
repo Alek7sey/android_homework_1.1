@@ -43,11 +43,11 @@ class FeedFragment : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-                //  viewModel.shareById(post.id)
+                viewModel.shareById(post.id)
             }
 
             override fun onViews(post: Post) {
-                //     viewModel.viewById(post.id)
+                viewModel.viewById(post.id)
             }
 
             override fun onEdit(post: Post) {
