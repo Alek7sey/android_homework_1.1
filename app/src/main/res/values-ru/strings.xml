@@ -31,4 +31,6 @@
     <string name="error_loading">Ошибка загрузки данных</string>
     <string name="send">Отправить</string>
     <string name="new_posts">Показать новые посты</string>
+    <string name="remove">Удалить</string>
+    <string name="image">Картинка</string>
 </resources>

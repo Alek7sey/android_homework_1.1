@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,10 +15,11 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
-
+import java.io.File
 
 private val empty = Post(
     id = 0,
@@ -43,9 +45,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.getNewerCount(firstId).asLiveData(Dispatchers.Default)
     }
 
-    private val _state = MutableLiveData(FeedModelState())
+    private val _state = MutableLiveData<FeedModelState>()
     val state: LiveData<FeedModelState>
         get() = _state
+    private val _photo = MutableLiveData<PhotoModel?>()
+    val photo: LiveData<PhotoModel?>
+        get() = _photo
+
+
     val edited = MutableLiveData(empty)
 
     private val _postCreated = SingleLiveEvent<Unit>()
@@ -65,6 +72,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 FeedModelState(error = true)
             }
         }
+    }
+
+    fun setPhoto(uri: Uri, file: File) {
+        _photo.value = PhotoModel(uri, file)
+    }
+
+    fun clearPhoto() {
+        _photo.value = null
     }
 
     fun refreshPosts() {
@@ -117,20 +132,21 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     fun save() {
-        edited.value?.let {
-            _postCreated.value = Unit
+        edited.value?.let { post ->
             viewModelScope.launch {
                 try {
-                    repository.save(it)
+                    photo.value?.let {
+                        repository.
+                        saveWithAttachment(post, it)
+                    } ?: repository.save(post)
+                    _postCreated.value = Unit
+                    clear()
                     _state.value = FeedModelState()
-
                 } catch (e: Exception) {
                     _state.value = FeedModelState(error = true)
                 }
             }
-
         }
-        clear()
     }
 
     fun send(post: Post) {

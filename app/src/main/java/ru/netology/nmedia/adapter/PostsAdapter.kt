@@ -23,6 +23,7 @@ interface OnInteractionListener {
     fun onRunVideo(post: Post) {}
     fun onViewPost(post: Post) {}
     fun onSend(post: Post) {}
+    fun onImage(post: Post) {}
 }
 
 class PostsAdapter(
@@ -59,7 +60,7 @@ class PostViewHolder(
                 groupVideo.visibility = View.GONE
             }
             if (post.unposted == 1) {
-               send.visibility = View.VISIBLE
+                send.visibility = View.VISIBLE
             } else {
                 send.visibility = View.GONE
             }
@@ -73,14 +74,15 @@ class PostViewHolder(
                 .into(binding.avatar)
 
             if (post.attachment != null) {
-                val url = "http://10.0.2.2:9999/images/${post.attachment.url}"
-                Glide.with(binding.Attachment)
+                val url = "http://10.0.2.2:9999/media/${post.attachment.url}"
+                Glide.with(binding.attachment)
                     .load(url)
                     .timeout(10_000)
-                    .into(binding.Attachment)
-                Attachment.visibility = View.VISIBLE
+                    .centerInside()
+                    .into(binding.attachment)
+                attachment.visibility = View.VISIBLE
             } else {
-                Attachment.visibility = View.GONE
+                attachment.visibility = View.GONE
             }
 
             menu.setOnClickListener {
@@ -112,6 +114,7 @@ class PostViewHolder(
             groupVideo.setAllOnClickListener { onInteractionListener.onRunVideo(post) }
             root.setOnClickListener { onInteractionListener.onViewPost(post) }
             send.setOnClickListener { onInteractionListener.onSend(post) }
+            attachment.setOnClickListener { onInteractionListener.onImage(post) }
         }
     }
 }

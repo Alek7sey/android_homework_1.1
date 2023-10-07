@@ -78,6 +78,12 @@ class FeedFragment : Fragment() {
             override fun onSend(post: Post) {
                 viewModel.send(post)
             }
+
+            override fun onImage(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_imageFragment,
+                    Bundle().apply { putString("urlAttach", post.attachment?.url) })
+            }
         })
 
         binding.list.adapter = adapter
