@@ -9,8 +9,10 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
@@ -23,6 +25,7 @@ import java.io.File
 
 private val empty = Post(
     id = 0,
+    authorId = 0,
     localId = 0,
     content = "",
     author = "",
@@ -34,11 +37,16 @@ private val empty = Post(
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: PostRepository = PostRepositoryImpl(AppDb.getInstance(application).postDao())
-    val data: LiveData<FeedModel> = repository.data
-        .map {
-            FeedModel(it, it.isEmpty())
-        }
-        .asLiveData(Dispatchers.Default)
+
+    val data: LiveData<FeedModel> = AppAuth.getInstance().authFlow.flatMapLatest { token ->
+        repository.data
+            .map { posts ->
+                FeedModel(posts.map {
+                    it.copy(ownedByMe = it.authorId == token?.id)
+                }, posts.isEmpty())
+            }
+    }.asLiveData(Dispatchers.Default)
+
 
     val newerCount: LiveData<Int> = data.switchMap {
         val firstId = it.posts.firstOrNull()?.id ?: 0L
@@ -117,27 +125,26 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-        fun shareById(id: Long) {
-            viewModelScope.launch {
-                _state.value = FeedModelState(refreshing = true)
-                repository.shareById(id)
-            }
+    fun shareById(id: Long) {
+        viewModelScope.launch {
+            _state.value = FeedModelState(refreshing = true)
+            repository.shareById(id)
         }
+    }
 
-        fun viewById(id: Long) {
-            viewModelScope.launch {
-                _state.value = FeedModelState(refreshing = true)
-                repository.viewById(id)
-            }
+    fun viewById(id: Long) {
+        viewModelScope.launch {
+            _state.value = FeedModelState(refreshing = true)
+            repository.viewById(id)
         }
+    }
 
     fun save() {
         edited.value?.let { post ->
             viewModelScope.launch {
                 try {
                     photo.value?.let {
-                        repository.
-                        saveWithAttachment(post, it)
+                        repository.saveWithAttachment(post, it)
                     } ?: repository.save(post)
                     _postCreated.value = Unit
                     clear()

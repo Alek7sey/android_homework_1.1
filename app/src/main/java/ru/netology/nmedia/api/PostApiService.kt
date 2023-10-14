@@ -9,27 +9,34 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
-import java.util.concurrent.TimeUnit
+import ru.netology.nmedia.dto.Token
 
-private val client = OkHttpClient.Builder()
-    .callTimeout(30, TimeUnit.SECONDS)
-    .let {
-        if (BuildConfig.DEBUG) {
-            it.addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-        } else {
-            it
-        }
+private val loggin = HttpLoggingInterceptor().apply {
+    if (BuildConfig.DEBUG) {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+}
+
+private val okhttp = OkHttpClient.Builder()
+    .addInterceptor(loggin)
+    .addInterceptor { chain ->
+        val request = AppAuth.getInstance().authFlow.value?.token?.let {
+            chain.request().newBuilder()
+                .addHeader("Authorization", it)
+                .build()
+        } ?: chain.request()
+
+        chain.proceed(request)
     }
     .build()
 
 private val retrofit = Retrofit.Builder()
     .baseUrl(BuildConfig.BASE_URL)
     .addConverterFactory(GsonConverterFactory.create())
-    .client(client)
+    .client(okhttp)
     .build()
 
 interface PostApiService {
@@ -54,6 +61,10 @@ interface PostApiService {
 
     @DELETE("posts/{id}/likes")
     suspend fun unlikePost(@Path("id") id: Long): Response<Post>
+
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<Token>
 }
 
 object PostApi {

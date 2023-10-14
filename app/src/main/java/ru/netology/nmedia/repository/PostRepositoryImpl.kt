@@ -69,11 +69,11 @@ class PostRepositoryImpl(
     }
 
     override suspend fun removeById(id: Long) {
-       val post = dao.searchPost(id)
+
+        val post = dao.searchPost(id)
         try {
             dao.removeById(id)
-            val response = PostApi.service.deletePost(id)
-
+            val response = PostApi.service.deletePost(post.id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -85,21 +85,6 @@ class PostRepositoryImpl(
             throw UnknownError
         }
     }
-
-//    override suspend fun save(post: Post) {
-//        try {
-//            val response = PostApi.service.savePost(post)
-//            if (!response.isSuccessful) {
-//                throw ApiError(response.code(), response.message())
-//            }
-//            val body = response.body() ?: throw ApiError(response.code(), response.message())
-//            dao.insert(PostEntity.fromDto(body))
-//        } catch (e: IOException) {
-//            throw NetworkError
-//        } catch (e: Exception) {
-//            throw UnknownError
-//        }
-//    }
 
     override suspend fun save(post: Post) {
         try {
@@ -125,7 +110,7 @@ class PostRepositoryImpl(
         try {
             val media = upload(model)
             val postWithAttachment = post.copy(attachment = Attachment(url = media.id, type = AttachmentType.IMAGE))
-           save(postWithAttachment)
+            save(postWithAttachment)
         } catch (e: AppError) {
             throw e
         } catch (e: IOException) {
@@ -161,7 +146,7 @@ class PostRepositoryImpl(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.removeById(post.localId)
+            dao.removeById(post.id)
             dao.insert(PostEntity.fromDto(body))
 
         } catch (e: IOException) {
@@ -198,11 +183,9 @@ class PostRepositoryImpl(
 
     override suspend fun shareById(id: Long) {
         dao.shareById(id)
-        // на сервере нет подобной функции
     }
 
     override suspend fun viewById(id: Long) {
         dao.viewById(id)
-        // на сервере нет подобной функции
     }
 }

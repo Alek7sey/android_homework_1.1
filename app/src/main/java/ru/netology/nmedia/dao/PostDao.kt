@@ -72,4 +72,5 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAll()
+
 }

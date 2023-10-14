@@ -17,6 +17,7 @@ import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
@@ -28,10 +29,17 @@ class FeedFragment : Fragment() {
     ): View {
         val binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
 
+        val authViewModel by viewModels<AuthViewModel>()
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                authViewModel.state.observe(viewLifecycleOwner) {
+                    if (authViewModel.authorized) {
+                        viewModel.likeById(post)
+                    } else {
+                        findNavController().navigate(R.id.action_feedFragment_to_loginFragment)
+                    }
+                }
             }
 
             override fun onShare(post: Post) {
@@ -114,7 +122,13 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            authViewModel.state.observe(viewLifecycleOwner) {
+                if (authViewModel.authorized) {
+                    findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+                } else {
+                    findNavController().navigate(R.id.action_feedFragment_to_loginFragment)
+                }
+            }
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
