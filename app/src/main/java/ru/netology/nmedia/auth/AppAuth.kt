@@ -3,12 +3,12 @@ package ru.netology.nmedia.auth
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.content.edit
-import androidx.work.Constraints
+/*import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.WorkManager*/
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +53,7 @@ class AppAuth private constructor(private val context: Context) {
     fun clear() {
         prefs.edit { clear() }
         _authFlow.value = null
+        sendPushToken()
     }
 
     fun sendPushToken(token: String? = null) {

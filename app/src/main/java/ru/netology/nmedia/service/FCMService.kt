@@ -11,11 +11,9 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import kotlinx.coroutines.tasks.await
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
 import ru.netology.nmedia.auth.AppAuth
@@ -47,13 +45,11 @@ class FCMService : FirebaseMessagingService() {
         val pushMessage = Gson().fromJson(message.data[content], PushMessage::class.java)
         val currentId = AppAuth.getInstance().authFlow.value?.id
         val recipientId = pushMessage.recipientId
-        val token = FirebaseMessaging.getInstance().token.result
 
         when {
-
             recipientId == null || recipientId == currentId -> showNotification(pushMessage)
-            recipientId == 0L && recipientId != currentId -> onNewToken(token)
-            recipientId != 0L && recipientId != currentId -> onNewToken(token)
+            recipientId == 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
+            recipientId != 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
             else -> {
                 return
             }
@@ -72,7 +68,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     private fun showNotification(msg: PushMessage) {
-        val notificationMessage = getString(R.string.new_pushnotification) + " " + msg.content
+        val notificationMessage = getString(R.string.new_pushnotification) + ": " + msg.content
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
