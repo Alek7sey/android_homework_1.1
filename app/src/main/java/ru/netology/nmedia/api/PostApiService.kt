@@ -12,6 +12,7 @@ import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PushToken
 import ru.netology.nmedia.dto.Token
 
 private val loggin = HttpLoggingInterceptor().apply {
@@ -54,6 +55,9 @@ interface PostApiService {
 
     @POST("posts/{id}/likes")
     suspend fun likePost(@Path("id") id: Long): Response<Post>
+
+    @POST("users/push-tokens")
+    suspend fun savePushToken(@Body token: PushToken): Response<Unit>
 
     @Multipart
     @POST("media")
