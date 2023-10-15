@@ -43,10 +43,11 @@ class FCMService : FirebaseMessagingService() {
         //  println(Gson().toJson(message))
 
         val pushMessage = Gson().fromJson(message.data[content], PushMessage::class.java)
-        val currentId = AppAuth.getInstance().authFlow.value?.id
+        val currentId = AppAuth.getInstance().authFlow.value?.id ?: 0
         val recipientId = pushMessage.recipientId
 
         when {
+            // null - всем пользователям, 0 - незарегистрированным (анонимным)
             recipientId == null || recipientId == currentId -> showNotification(pushMessage)
             recipientId == 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
             recipientId != 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
