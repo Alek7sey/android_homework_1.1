@@ -14,10 +14,13 @@ import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.LoginViewModel
 
 class LoginFragment : Fragment() {
+
+    private val viewModel: LoginViewModel by viewModels(
+        ownerProducer = ::requireParentFragment,
+    )
+    private val authViewModel by viewModels<AuthViewModel>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
-        val authViewModel by viewModels<AuthViewModel>()
-        val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
         binding.userLogin.setOnClickListener {
             AndroidUtils.hideKeyboard(requireView())
@@ -27,7 +30,7 @@ class LoginFragment : Fragment() {
                 Snackbar.make(binding.root, "Login or password is empty", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            loginViewModel.login(userName, userPassword)
+            viewModel.login(userName, userPassword)
             authViewModel.state.observe(viewLifecycleOwner) {
                 if (authViewModel.authorized) {
                     findNavController().navigateUp()

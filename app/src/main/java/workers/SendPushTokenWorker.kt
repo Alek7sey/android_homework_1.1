@@ -1,3 +1,4 @@
+/*
 package workers
 
 import androidx.work.CoroutineWorker
@@ -5,7 +6,6 @@ import android.content.Context
 import androidx.work.WorkerParameters
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
-import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dto.PushToken
 
 
@@ -36,4 +36,4 @@ class SendPushTokenWorker(
         }
     }
 
-}
+}*/

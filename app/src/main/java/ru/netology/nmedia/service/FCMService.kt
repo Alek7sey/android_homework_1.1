@@ -16,7 +16,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
-import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.dto.PushMessage
 import kotlin.random.Random
 
@@ -43,14 +43,14 @@ class FCMService : FirebaseMessagingService() {
         //  println(Gson().toJson(message))
 
         val pushMessage = Gson().fromJson(message.data[content], PushMessage::class.java)
-        val currentId = AppAuth.getInstance().authFlow.value?.id ?: 0
+        val currentId = DependencyContainer.getInstance().appAuth.authFlow.value?.id ?: 0
         val recipientId = pushMessage.recipientId
 
         when {
             // null - всем пользователям, 0 - незарегистрированным (анонимным)
             recipientId == null || recipientId == currentId -> showNotification(pushMessage)
-            recipientId == 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
-            recipientId != 0L && recipientId != currentId -> AppAuth.getInstance().sendPushToken()
+            recipientId == 0L && recipientId != currentId -> DependencyContainer.getInstance().appAuth.sendPushToken()
+            recipientId != 0L && recipientId != currentId -> DependencyContainer.getInstance().appAuth.sendPushToken()
             else -> {
                 return
             }
@@ -131,8 +131,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        //println(token)
-        AppAuth.getInstance().sendPushToken(token)
+        DependencyContainer.getInstance().appAuth.sendPushToken(token)
     }
 }
 

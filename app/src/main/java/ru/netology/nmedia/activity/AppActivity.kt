@@ -16,12 +16,20 @@ import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 
 class AppActivity : AppCompatActivity() {
+    private val dependencyContainer = DependencyContainer.getInstance()
+    private val viewModel: AuthViewModel by viewModels(
+        factoryProducer = {
+            ViewModelFactory(dependencyContainer.repository, dependencyContainer.appAuth)
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -48,18 +56,16 @@ class AppActivity : AppCompatActivity() {
             }
         }
 
-        val authViewModel by viewModels<AuthViewModel>()
-
         var currentMenuProvider: MenuProvider? = null
-        authViewModel.state.observe(this) {
+        viewModel.state.observe(this) {
             currentMenuProvider?.let(::removeMenuProvider)
 
             addMenuProvider(
                 object : MenuProvider {
                     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                         menuInflater.inflate(R.menu.auth_menu, menu)
-                        menu.setGroupVisible(R.id.registered, authViewModel.authorized)
-                        menu.setGroupVisible(R.id.unregistered, !authViewModel.authorized)
+                        menu.setGroupVisible(R.id.registered, viewModel.authorized)
+                        menu.setGroupVisible(R.id.unregistered, !viewModel.authorized)
                     }
 
                     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
@@ -74,7 +80,7 @@ class AppActivity : AppCompatActivity() {
                             }
 
                             R.id.logout -> {
-                                AppAuth.getInstance().clear()
+                                dependencyContainer.appAuth.clear()
                                 true
                             }
 
