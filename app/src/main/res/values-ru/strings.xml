@@ -39,4 +39,5 @@
     <string name="login">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="input">Войти</string>
+    <string name="new_pushnotification">Новое push уведомление</string>
 </resources>
