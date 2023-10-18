@@ -14,16 +14,22 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
-import ru.netology.nmedia.di.DependencyContainer
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.PushMessage
+import javax.inject.Inject
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -43,14 +49,14 @@ class FCMService : FirebaseMessagingService() {
         //  println(Gson().toJson(message))
 
         val pushMessage = Gson().fromJson(message.data[content], PushMessage::class.java)
-        val currentId = DependencyContainer.getInstance().appAuth.authFlow.value?.id ?: 0
+        val currentId = appAuth.authFlow.value?.id ?: 0
         val recipientId = pushMessage.recipientId
 
         when {
             // null - всем пользователям, 0 - незарегистрированным (анонимным)
             recipientId == null || recipientId == currentId -> showNotification(pushMessage)
-            recipientId == 0L && recipientId != currentId -> DependencyContainer.getInstance().appAuth.sendPushToken()
-            recipientId != 0L && recipientId != currentId -> DependencyContainer.getInstance().appAuth.sendPushToken()
+            recipientId == 0L && recipientId != currentId -> appAuth.sendPushToken()
+            recipientId != 0L && recipientId != currentId -> appAuth.sendPushToken()
             else -> {
                 return
             }
@@ -131,7 +137,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        DependencyContainer.getInstance().appAuth.sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
 }
 
