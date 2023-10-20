@@ -40,4 +40,5 @@
     <string name="password">Пароль</string>
     <string name="input">Войти</string>
     <string name="new_pushnotification">Новое push уведомление</string>
+    <string name="google_api_unavailable">Google API недоступен</string>
 </resources>

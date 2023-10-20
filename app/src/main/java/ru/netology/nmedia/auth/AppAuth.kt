@@ -25,6 +25,9 @@ class AppAuth @Inject constructor(
     @ApplicationContext
     private val context: Context
 ) {
+    @Inject
+    lateinit var fireBase: FirebaseMessaging
+
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val tokenKey = "token"
     private val idKey = "id"
@@ -73,7 +76,7 @@ class AppAuth @Inject constructor(
                 val entryPoint = EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
                 entryPoint.getApiService().savePushToken(
                     PushToken(
-                        token ?: FirebaseMessaging.getInstance().token.await()
+                        token ?: fireBase.token.await()
                     )
                 )
             } catch (e: Exception) {
