@@ -1,27 +1,26 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.File
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -34,11 +33,13 @@ private val empty = Post(
     likedByMe = false
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val repository: PostRepository,
+    appAuth: AppAuth,
+    ) : ViewModel() {
 
-    private val repository: PostRepository = PostRepositoryImpl(AppDb.getInstance(application).postDao())
-
-    val data: LiveData<FeedModel> = AppAuth.getInstance().authFlow.flatMapLatest { token ->
+    val data: LiveData<FeedModel> = appAuth.authFlow.flatMapLatest { token ->
         repository.data
             .map { posts ->
                 FeedModel(posts.map {
@@ -188,25 +189,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 FeedModelState(error = true)
             }
         }
-
-//        _data.value = FeedModel(refreshing = true)
-//        repository.removeById(id, object : PostRepository.Callback<Unit> {
-//            val oldPosts = _data.value
-//            override fun onSuccess(posts: Unit) {
-//                _data.value =
-//                    oldPosts?.copy(
-//                        posts = oldPosts.posts.filter {
-//                            it.id != id
-//                        }
-//                    )
-//            }
-//
-//            override fun onError(e: Exception) {
-//                toastServerError.show()
-//                _data.value = oldPosts
-//                _data.value = FeedModel(error = true)
-//            }
-//        })
     }
 
     fun clear() {

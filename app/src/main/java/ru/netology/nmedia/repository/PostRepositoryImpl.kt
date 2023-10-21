@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.netology.nmedia.api.PostApi
+import ru.netology.nmedia.api.PostApiService
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Media
@@ -23,9 +23,11 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
+import javax.inject.Inject
 
-class PostRepositoryImpl(
-    private val dao: PostDao
+class PostRepositoryImpl @Inject constructor(
+    private val dao: PostDao,
+    private val apiService: PostApiService,
 ) : PostRepository {
 
     override val data = dao.getAll()
@@ -37,7 +39,7 @@ class PostRepositoryImpl(
     override fun getNewerCount(postId: Long): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
-            val response = PostApi.service.getNewer(postId)
+            val response = apiService.getNewer(postId)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -55,7 +57,7 @@ class PostRepositoryImpl(
         .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
-        val response = PostApi.service.getAll()
+        val response = apiService.getAll()
         if (!response.isSuccessful) {
             throw ApiError(response.code(), response.message())
         }
@@ -73,7 +75,7 @@ class PostRepositoryImpl(
         val post = dao.searchPost(id)
         try {
             dao.removeById(id)
-            val response = PostApi.service.deletePost(post.id)
+            val response = apiService.deletePost(post.id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -91,7 +93,7 @@ class PostRepositoryImpl(
             post.unposted = 1
             //  val maxId = dao.maxId().toLong()
             dao.insert(PostEntity.fromDto(post))
-            val response = PostApi.service.savePost(post)
+            val response = apiService.savePost(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -126,7 +128,7 @@ class PostRepositoryImpl(
                 "file", photoModel.file.name, photoModel.file.asRequestBody()
             )
 
-            val response = PostApi.service.saveMedia(media)
+            val response = apiService.saveMedia(media)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -141,7 +143,7 @@ class PostRepositoryImpl(
 
     override suspend fun send(post: Post) {
         try {
-            val response = PostApi.service.savePost(post)
+            val response = apiService.savePost(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -163,11 +165,11 @@ class PostRepositoryImpl(
             }
             val response = when (post.likedByMe) {
                 true -> {
-                    PostApi.service.unlikePost(post.id)
+                    apiService.unlikePost(post.id)
                 }
 
                 false -> {
-                    PostApi.service.likePost(post.id)
+                    apiService.likePost(post.id)
                 }
             }
 

@@ -7,24 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class PostFragment : Fragment() {
     private var postId: Long = 0
+
+    private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val binding = FragmentPostBinding.inflate(layoutInflater, container, false)
         arguments?.textArg?.let {
             postId = it.toLong()
@@ -33,7 +39,11 @@ class PostFragment : Fragment() {
         val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                if (authViewModel.authorized) {
+                    viewModel.likeById(post)
+                } else {
+                    findNavController().navigate(R.id.action_postFragment_to_loginFragment)
+                }
             }
 
             override fun onShare(post: Post) {

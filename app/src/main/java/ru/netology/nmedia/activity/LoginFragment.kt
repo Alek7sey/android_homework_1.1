@@ -5,19 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.databinding.FragmentLoginBinding
 import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.LoginViewModel
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
+
+    private val viewModel: LoginViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
-        val authViewModel by viewModels<AuthViewModel>()
-        val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
         binding.userLogin.setOnClickListener {
             AndroidUtils.hideKeyboard(requireView())
@@ -27,7 +32,7 @@ class LoginFragment : Fragment() {
                 Snackbar.make(binding.root, "Login or password is empty", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            loginViewModel.login(userName, userPassword)
+            viewModel.login(userName, userPassword)
             authViewModel.state.observe(viewLifecycleOwner) {
                 if (authViewModel.authorized) {
                     findNavController().navigateUp()

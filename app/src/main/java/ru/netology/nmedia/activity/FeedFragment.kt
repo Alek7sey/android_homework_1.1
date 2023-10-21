@@ -1,5 +1,4 @@
 package ru.netology.nmedia.activity
-
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -20,7 +20,11 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
+
+    private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel:AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,18 +32,15 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
-
-        val authViewModel by viewModels<AuthViewModel>()
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                authViewModel.state.observe(viewLifecycleOwner) {
+              //  viewModel.state.observe(viewLifecycleOwner) {
                     if (authViewModel.authorized) {
                         viewModel.likeById(post)
                     } else {
                         findNavController().navigate(R.id.action_feedFragment_to_loginFragment)
                     }
-                }
+              //  }
             }
 
             override fun onShare(post: Post) {
@@ -122,7 +123,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            authViewModel.state.observe(viewLifecycleOwner) {
+           viewModel.state.observe(viewLifecycleOwner) {
                 if (authViewModel.authorized) {
                     findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
                 } else {
@@ -132,7 +133,6 @@ class FeedFragment : Fragment() {
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
-            //Log.d("FeedFragment", "Newer count : $it")
             if (it > 0) {
                 binding.loadNewPosts.visibility = View.VISIBLE
                 binding.loadNewPosts.text = "load new posts $it"

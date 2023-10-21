@@ -4,14 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.api.PostApi
+import ru.netology.nmedia.api.PostApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.error.*
 import ru.netology.nmedia.model.FeedModelState
 import java.io.IOException
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val apiService: PostApiService,
+    private val appAuth: AppAuth,
+    ) : ViewModel() {
     private val _state = MutableLiveData<FeedModelState>()
     val state: LiveData<FeedModelState>
         get() = _state
@@ -22,7 +28,7 @@ class LoginViewModel : ViewModel() {
             try {
                 val result =
                     try {
-                        val response = PostApi.service.updateUser(username, password)
+                        val response = apiService.updateUser(username, password)
                         if (!response.isSuccessful) {
                             throw ApiError(response.code(), response.message())
                         }
@@ -32,7 +38,7 @@ class LoginViewModel : ViewModel() {
                     } catch (e: Exception) {
                         throw UnknownError
                     }
-                result?.let { AppAuth.getInstance().setAuth(it) }
+                result?.let { appAuth.setAuth(it) }
 
             } catch (e: Exception) {
                 _state.value = FeedModelState(error = true)

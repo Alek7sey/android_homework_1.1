@@ -40,4 +40,5 @@
     <string name="password">Password</string>
     <string name="input">input</string>
     <string name="new_pushnotification">New push notification</string>
+    <string name="google_api_unavailable">Google API Unavailable</string>
 </resources>
