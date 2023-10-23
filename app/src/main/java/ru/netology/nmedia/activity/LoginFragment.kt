@@ -20,7 +20,6 @@ class LoginFragment : Fragment() {
     private val viewModel: LoginViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
 

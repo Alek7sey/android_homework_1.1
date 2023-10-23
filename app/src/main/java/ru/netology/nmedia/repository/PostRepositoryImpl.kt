@@ -1,12 +1,13 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApiService
@@ -24,17 +25,24 @@ import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: PostApiService,
 ) : PostRepository {
 
-    override val data = dao.getAll()
-        .map {
-            it.map(PostEntity::toDto)
-        }
-        .flowOn(Dispatchers.Default)
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { PostPagingSource(apiService) },
+    ).flow
+
+    /*dao.getAll()
+    .map {
+        it.map(PostEntity::toDto)
+    }
+    .flowOn(Dispatchers.Default)*/
 
     override fun getNewerCount(postId: Long): Flow<Int> = flow {
         while (true) {

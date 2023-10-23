@@ -1,4 +1,4 @@
-package ru.netology.nmedia.api
+package ru.netology.nmedia.service
 
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
