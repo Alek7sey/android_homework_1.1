@@ -63,7 +63,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onViews(post: Post) {
-         //       viewModel.viewById(post.id)
+                viewModel.viewById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -77,7 +77,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.localId)
+                viewModel.removeById(post.id)
                 findNavController().navigateUp()
             }
 
@@ -86,12 +86,12 @@ class PostFragment : Fragment() {
             }
         })
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
+       /* viewModel.data.observe(viewLifecycleOwner) { state ->
             val post: Post? = state.posts.find { it.id == postId }
             if (post != null) {
                 postViewHolder.bind(post)
             }
-        }
+        }*/
 
         return binding.root
     }

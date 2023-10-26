@@ -35,7 +35,7 @@ class SendPushTokenWorker @Inject constructor(
             )
 
             Result.success()
-            
+
         } catch (e: Exception) {
             e.printStackTrace()
 

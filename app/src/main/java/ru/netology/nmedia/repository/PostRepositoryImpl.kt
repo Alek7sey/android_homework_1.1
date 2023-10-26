@@ -1,12 +1,13 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApiService
@@ -24,17 +25,24 @@ import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: PostApiService,
 ) : PostRepository {
 
-    override val data = dao.getAll()
-        .map {
-            it.map(PostEntity::toDto)
-        }
-        .flowOn(Dispatchers.Default)
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { PostPagingSource(apiService) },
+    ).flow
+
+    /*dao.getAll()
+    .map {
+        it.map(PostEntity::toDto)
+    }
+    .flowOn(Dispatchers.Default)*/
 
     override fun getNewerCount(postId: Long): Flow<Int> = flow {
         while (true) {
@@ -56,15 +64,15 @@ class PostRepositoryImpl @Inject constructor(
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
-    override suspend fun getAll() {
-        val response = apiService.getAll()
-        if (!response.isSuccessful) {
-            throw ApiError(response.code(), response.message())
-        }
-        val posts = response.body() ?: throw ApiError(response.code(), response.message())
-        dao.removeAll()
-        dao.insert(posts.map(PostEntity::fromDto))
-    }
+//    override suspend fun getAll() {
+//        val response = apiService.getAll()
+//        if (!response.isSuccessful) {
+//            throw ApiError(response.code(), response.message())
+//        }
+//        val posts = response.body() ?: throw ApiError(response.code(), response.message())
+//        dao.removeAll()
+//        dao.insert(posts.map(PostEntity::fromDto))
+//    }
 
     override suspend fun readAll() {
         dao.readAll()
@@ -75,7 +83,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = dao.searchPost(id)
         try {
             dao.removeById(id)
-            val response = apiService.deletePost(post.id)
+            val response = apiService.deletePost(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

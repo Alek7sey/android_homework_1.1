@@ -1,4 +1,5 @@
 package ru.netology.nmedia.activity
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,9 +9,16 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -24,7 +32,7 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 class FeedFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
-    private val authViewModel:AuthViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +42,11 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-              //  viewModel.state.observe(viewLifecycleOwner) {
-                    if (authViewModel.authorized) {
-                        viewModel.likeById(post)
-                    } else {
-                        findNavController().navigate(R.id.action_feedFragment_to_loginFragment)
-                    }
-              //  }
+                if (authViewModel.authorized) {
+                    viewModel.likeById(post)
+                } else {
+                    findNavController().navigate(R.id.action_feedFragment_to_loginFragment)
+                }
             }
 
             override fun onShare(post: Post) {
@@ -96,34 +102,71 @@ class FeedFragment : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            binding.empty.isVisible = state.empty
-            adapter.submitList(state.posts)
+
+        /*@Suppress("DEPRECATION")
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
+            }
+        }*/
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.data.collectLatest(adapter::submitData)
+            }
         }
+
+//        viewModel.data.observe(viewLifecycleOwner) { state ->
+//            binding.empty.isVisible = state.empty
+//            adapter.submitList(state.posts)
+//        }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.swipeRefreshLayout.isRefreshing = state.refreshing
             if (state.error) {
-                //  Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
-                //      .setAction(R.string.retry) {
-                //         viewModel.loadPosts()
-                //     }
-                //     .show()
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.retry) {
+                        //viewModel.loadPosts()
+                        adapter.refresh()
+                    }
+                    .show()
             }
             //  binding.progress.isVisible = state.loading
         }
 
         binding.retry.setOnClickListener {
-            viewModel.loadPosts()
+            // viewModel.loadPosts()
+            adapter.retry()
+        }
+
+        /* @Suppress("DEPRECATION")
+         lifecycleScope.launchWhenCreated {
+             adapter.loadStateFlow.collectLatest {
+                 binding.swipeRefreshLayout.isRefreshing = it.refresh is LoadState.Loading
+                         || it.append is LoadState.Loading
+                         || it.prepend is LoadState.Loading
+             }
+         }*/
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swipeRefreshLayout.isRefreshing =
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
+                }
+            }
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refreshPosts()
+            //viewModel.refreshPosts()
+            adapter.refresh()
         }
 
         binding.fab.setOnClickListener {
-           viewModel.state.observe(viewLifecycleOwner) {
+            viewModel.state.observe(viewLifecycleOwner) {
                 if (authViewModel.authorized) {
                     findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
                 } else {
@@ -132,14 +175,14 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
+        /*viewModel.newerCount.observe(viewLifecycleOwner) {
             if (it > 0) {
                 binding.loadNewPosts.visibility = View.VISIBLE
                 binding.loadNewPosts.text = "load new posts $it"
             } else {
                 binding.loadNewPosts.visibility = View.GONE
             }
-        }
+        }*/
 
         binding.loadNewPosts.setOnClickListener {
             viewModel.readAll()

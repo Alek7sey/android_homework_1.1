@@ -1,13 +1,15 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.PhotoModel
 
 interface PostRepository {
-    val data: Flow<List<Post>>
+    //val data: Flow<List<Post>>
+    val data: Flow<PagingData<Post>>
     fun getNewerCount(postId: Long): Flow<Int>
-    suspend fun getAll()
+   // suspend fun getAll()
     suspend fun readAll()
     suspend fun shareById(id: Long)
     suspend fun viewById(id: Long)
