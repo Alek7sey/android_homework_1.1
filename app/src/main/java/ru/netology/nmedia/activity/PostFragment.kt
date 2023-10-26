@@ -77,7 +77,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.localId)
+                viewModel.removeById(post.id)
                 findNavController().navigateUp()
             }
 

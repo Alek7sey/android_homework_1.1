@@ -12,8 +12,8 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE hidden == 0 ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
-    @Query("SELECT * FROM PostEntity WHERE localId = :localId")
-    suspend fun searchPost(localId: Long): PostEntity
+    @Query("SELECT * FROM PostEntity WHERE id = :id")
+    suspend fun searchPost(id: Long): PostEntity
 
     @Query("SELECT * FROM PostEntity WHERE id = :id")
     suspend fun searchPostById(id: Long): PostEntity

@@ -64,15 +64,15 @@ class PostRepositoryImpl @Inject constructor(
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
-    override suspend fun getAll() {
-        val response = apiService.getAll()
-        if (!response.isSuccessful) {
-            throw ApiError(response.code(), response.message())
-        }
-        val posts = response.body() ?: throw ApiError(response.code(), response.message())
-        dao.removeAll()
-        dao.insert(posts.map(PostEntity::fromDto))
-    }
+//    override suspend fun getAll() {
+//        val response = apiService.getAll()
+//        if (!response.isSuccessful) {
+//            throw ApiError(response.code(), response.message())
+//        }
+//        val posts = response.body() ?: throw ApiError(response.code(), response.message())
+//        dao.removeAll()
+//        dao.insert(posts.map(PostEntity::fromDto))
+//    }
 
     override suspend fun readAll() {
         dao.readAll()
@@ -83,7 +83,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = dao.searchPost(id)
         try {
             dao.removeById(id)
-            val response = apiService.deletePost(post.id)
+            val response = apiService.deletePost(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

@@ -65,10 +65,10 @@ class NewPostFragment : Fragment() {
         }
         binding.editText.requestFocus()
 
-        viewModel.postCreated.observe(viewLifecycleOwner) {
+       /* viewModel.postCreated.observe(viewLifecycleOwner) {
             viewModel.loadPosts()
             findNavController().navigateUp()
-        }
+        }*/
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner, object : OnBackPressedCallback(true) {

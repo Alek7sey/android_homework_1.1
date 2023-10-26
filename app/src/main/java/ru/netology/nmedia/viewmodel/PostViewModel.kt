@@ -90,17 +90,17 @@ class PostViewModel @Inject constructor(
         loadPosts()
     }*/
 
-    fun loadPosts() {
-        viewModelScope.launch {
-            _state.value = FeedModelState(loading = true)
-            _state.value = try {
-                repository.getAll()
-                FeedModelState()
-            } catch (e: Exception) {
-                FeedModelState(error = true)
-            }
-        }
-    }
+//    fun loadPosts() {
+//        viewModelScope.launch {
+//            _state.value = FeedModelState(loading = true)
+//            _state.value = try {
+//                repository.getAll()
+//                FeedModelState()
+//            } catch (e: Exception) {
+//                FeedModelState(error = true)
+//            }
+//        }
+//    }
 
     fun setPhoto(uri: Uri, file: File) {
         _photo.value = PhotoModel(uri, file)
@@ -110,7 +110,7 @@ class PostViewModel @Inject constructor(
         _photo.value = null
     }
 
-    fun refreshPosts() {
+    /*fun refreshPosts() {
         viewModelScope.launch {
             _state.value = FeedModelState(refreshing = true)
             _state.value = try {
@@ -120,7 +120,7 @@ class PostViewModel @Inject constructor(
                 FeedModelState(error = true)
             }
         }
-    }
+    }*/
 
     fun readAll() =
         viewModelScope.launch {
