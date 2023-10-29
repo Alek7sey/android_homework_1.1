@@ -23,4 +23,7 @@ interface PostRemoteKeyDao {
 
     @Query("DELETE FROM PostRemoteKeyEntity")
     suspend fun clear()
+
+    @Query("SELECT COUNT(*) == 0 FROM PostRemoteKeyEntity")
+    suspend fun isEmpty(): Boolean
 }

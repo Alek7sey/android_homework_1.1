@@ -25,15 +25,23 @@ class PostRemoteMediator(
     override suspend fun load(loadType: LoadType, state: PagingState<Int, PostEntity>): MediatorResult {
         try {
             val result = when (loadType) {
-                LoadType.REFRESH -> apiService.getLatest(state.config.initialLoadSize)
+                LoadType.REFRESH -> {
+                    if (postDao.isEmpty() && postRemoteKeyDao.isEmpty()) {
+                        apiService.getLatest(state.config.initialLoadSize)
+                    } else {
+                        val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                        apiService.getAfter(id, state.config.pageSize)
+                    }
+
+                }
+
                 LoadType.PREPEND -> {
-                    //val id = state.firstItemOrNull()?.id ?: return MediatorResult.Success(false)
-                    val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
-                    apiService.getAfter(id, state.config.pageSize)
+//                    val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(true)
+//                    apiService.getAfter(id, state.config.pageSize)
+                    return MediatorResult.Success(true)
                 }
 
                 LoadType.APPEND -> {
-                    //val id = state.lastItemOrNull()?.id ?: return MediatorResult.Success(false)
                     val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
                     apiService.getBefore(id, state.config.pageSize)
                 }
@@ -50,20 +58,29 @@ class PostRemoteMediator(
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        //postRemoteKeyDao.clear()
-                        postDao.removeAll()
-                        postRemoteKeyDao.insert(
-                            listOf(
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.AFTER,
-                                    body.first().id,
-                                ),
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.BEFORE,
-                                    body.last().id,
+                        // postDao.removeAll()
+                        if (postDao.isEmpty()) {
+                            postRemoteKeyDao.clear()
+                            postRemoteKeyDao.insert(
+                                listOf(
+                                    PostRemoteKeyEntity(
+                                        PostRemoteKeyEntity.KeyType.AFTER,
+                                        body.first().id,
+                                    ),
+                                    PostRemoteKeyEntity(
+                                        PostRemoteKeyEntity.KeyType.BEFORE,
+                                        body.last().id,
+                                    )
                                 )
                             )
-                        )
+                        } else {
+                            postRemoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    PostRemoteKeyEntity.KeyType.AFTER,
+                                    body.first().id
+                                )
+                            )
+                        }
                     }
 
                     LoadType.PREPEND -> {
@@ -85,6 +102,7 @@ class PostRemoteMediator(
                     }
                 }
                 postDao.insert(body.map(PostEntity::fromDto))
+
             }
 
             return MediatorResult.Success(endOfPaginationReached = body.isEmpty())
