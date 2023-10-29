@@ -17,6 +17,10 @@ import javax.inject.Singleton
 @Module
 class ApiModule {
 
+    companion object {
+        private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
+    }
+
     @Provides
     @Singleton
     fun provideLogging(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
@@ -48,7 +52,7 @@ class ApiModule {
     fun provideRetrofit(
         okhttp: OkHttpClient
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okhttp)
         .build()
