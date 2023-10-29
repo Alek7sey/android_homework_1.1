@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'ru.netology.nmedia'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ru.netology.nmedia"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -59,9 +59,9 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.6.1"
     implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
-    implementation "androidx.room:room-runtime:2.5.2"
-    implementation "androidx.room:room-ktx:2.5.2"
-    kapt "androidx.room:room-compiler:2.5.2"
+    implementation "androidx.room:room-runtime:2.6.0"
+    implementation "androidx.room:room-ktx:2.6.0"
+    kapt "androidx.room:room-compiler:2.6.0"
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation "com.google.firebase:firebase-messaging-ktx"
     implementation "com.google.android.gms:play-services-base:18.2.0"
@@ -78,6 +78,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.8.1"
     implementation "com.google.dagger:hilt-android:2.47"
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.room:room-paging:2.6.0"
     kapt "com.google.dagger:hilt-compiler:2.47"
 
     testImplementation 'junit:junit:4.13.2'
