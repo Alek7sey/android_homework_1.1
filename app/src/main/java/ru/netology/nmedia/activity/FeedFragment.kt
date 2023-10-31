@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,14 +15,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
@@ -101,14 +101,10 @@ class FeedFragment : Fragment() {
             }
         })
 
-        binding.list.adapter = adapter
-
-        /*@Suppress("DEPRECATION")
-        lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
-                adapter.submitData(it)
-            }
-        }*/
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() },
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -116,52 +112,48 @@ class FeedFragment : Fragment() {
             }
         }
 
-//        viewModel.data.observe(viewLifecycleOwner) { state ->
-//            binding.empty.isVisible = state.empty
-//            adapter.submitList(state.posts)
+//        viewModel.state.observe(viewLifecycleOwner) { state ->
+//            binding.progress.isVisible = state.loading
+//            binding.swipeRefreshLayout.isRefreshing = state.refreshing
+//            if (state.error) {
+//                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(R.string.retry) {
+//                        adapter.refresh()
+//                    }
+//                    .show()
+//            }
 //        }
-
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            binding.swipeRefreshLayout.isRefreshing = state.refreshing
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.retry) {
-                        //viewModel.loadPosts()
-                        adapter.refresh()
-                    }
-                    .show()
-            }
-            //  binding.progress.isVisible = state.loading
-        }
-
-        binding.retry.setOnClickListener {
-            // viewModel.loadPosts()
-            adapter.retry()
-        }
-
-        /* @Suppress("DEPRECATION")
-         lifecycleScope.launchWhenCreated {
-             adapter.loadStateFlow.collectLatest {
-                 binding.swipeRefreshLayout.isRefreshing = it.refresh is LoadState.Loading
-                         || it.append is LoadState.Loading
-                         || it.prepend is LoadState.Loading
-             }
-         }*/
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 adapter.loadStateFlow.collectLatest { state ->
                     binding.swipeRefreshLayout.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
+                        state.refresh is LoadState.Loading
+//                                || state.prepend is LoadState.Loading
+//                                || state.append is LoadState.Loading
+
+                    val isListEmpty = state.refresh is LoadState.NotLoading && adapter.itemCount == 0
+
+                    binding.empty.isVisible = isListEmpty
+                    binding.list.isVisible = !isListEmpty
+                    binding.retryBtnEmpty.isVisible = state.source.refresh is LoadState.Error
+
+                    val errorState = state.source.append as? LoadState.Error
+                        ?: state.source.prepend as? LoadState.Error
+                        ?: state.append as? LoadState.Error
+                        ?: state.prepend as? LoadState.Error
+                    errorState?.let {
+                        Toast.makeText(requireActivity(), "Whoops ${it.error}", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
 
+        binding.retryBtnEmpty.setOnClickListener {
+            adapter.retry()
+        }
+
         binding.swipeRefreshLayout.setOnRefreshListener {
-            //viewModel.refreshPosts()
             adapter.refresh()
         }
 
@@ -189,13 +181,13 @@ class FeedFragment : Fragment() {
             binding.loadNewPosts.visibility = View.GONE
         }
 
-        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
+       /* adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {
                     binding.list.smoothScrollToPosition(0)
                 }
             }
-        })
+        })*/
 
         return binding.root
 
