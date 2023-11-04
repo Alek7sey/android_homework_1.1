@@ -23,12 +23,18 @@ data class Post(
     val linkVideo: String? = null,
     val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
-): FeedItem
+) : FeedItem
 
 data class Ad(
     override val id: Long,
     val image: String,
-): FeedItem
+) : FeedItem
+
+data class SeparatorItem(
+    override val id: Long,
+    val timing: String,
+)
+: FeedItem
 
 data class Attachment(
     val url: String,

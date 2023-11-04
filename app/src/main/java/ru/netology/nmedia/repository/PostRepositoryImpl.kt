@@ -1,5 +1,7 @@
 package ru.netology.nmedia.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -24,6 +26,7 @@ import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.SeparatorItem
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.enumeration.AttachmentType
@@ -33,6 +36,7 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -45,6 +49,7 @@ class PostRepositoryImpl @Inject constructor(
     appDb: AppDb
 ) : PostRepository {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
@@ -57,6 +62,20 @@ class PostRepositoryImpl @Inject constructor(
         )
     ).flow.map {
         it.map(PostEntity::toDto)
+            .insertSeparators { before, _ ->
+                val datetime = OffsetDateTime.now().toEpochSecond()
+                if (before == null) {
+                    return@insertSeparators null
+                }
+
+                val timing = when ((datetime - before.published.toLong()) / 3600) {
+                    in 0..24 -> "Сегодня"
+                    in 24..47 -> "Вчера"
+                    else -> "На прошлой неделе"
+                }
+                SeparatorItem(Random.nextLong(), timing = timing)
+            }
+
             .insertSeparators { previous, _ ->
                 if (previous?.id?.rem(5) == 0L) {
                     Ad(Random.nextLong(), "figma.jpg")
@@ -65,12 +84,6 @@ class PostRepositoryImpl @Inject constructor(
                 }
             }
     }
-
-    /*dao.getAll()
-    .map {
-        it.map(PostEntity::toDto)
-    }
-    .flowOn(Dispatchers.Default)*/
 
     override fun getNewerCount(postId: Long): Flow<Int> = flow {
         while (true) {

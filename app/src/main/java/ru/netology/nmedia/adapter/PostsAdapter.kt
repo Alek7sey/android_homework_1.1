@@ -14,9 +14,11 @@ import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.SeparatorViewItemBinding
 import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.SeparatorItem
 import ru.netology.nmedia.utils.clicksCount
 import ru.netology.nmedia.utils.load
 
@@ -39,6 +41,7 @@ class PostsAdapter(
         when (getItem(position)) {
             is Ad -> R.layout.card_ad
             is Post -> R.layout.card_post
+            is SeparatorItem -> R.layout.separator_view_item
             null -> error("unknown item type")
         }
 
@@ -54,6 +57,11 @@ class PostsAdapter(
                 AdViewHolder(binding)
             }
 
+            R.layout.separator_view_item -> {
+                val binding = SeparatorViewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                SeparatorTimingHolder(binding)
+            }
+
             else -> error("unknown item type: $viewType")
         }
 
@@ -61,6 +69,7 @@ class PostsAdapter(
         when (val item = getItem(position)) {
             is Ad -> (holder as? AdViewHolder)?.bind(item)
             is Post -> (holder as? PostViewHolder)?.bind(item)
+            is SeparatorItem -> (holder as? SeparatorTimingHolder)?.bind(item)
             null -> error("unknown item type")
         }
     }
@@ -71,6 +80,14 @@ class AdViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(ad: Ad) {
         binding.image.load("${BuildConfig.BASE_URL}/media/${ad.image}")
+    }
+}
+
+class SeparatorTimingHolder(
+    private val binding: SeparatorViewItemBinding,
+) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(separatorItem: SeparatorItem) {
+        binding.separatorTime.text = separatorItem.timing
     }
 }
 
