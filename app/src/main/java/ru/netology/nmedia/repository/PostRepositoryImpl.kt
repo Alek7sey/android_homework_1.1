@@ -62,25 +62,41 @@ class PostRepositoryImpl @Inject constructor(
         )
     ).flow.map {
         it.map(PostEntity::toDto)
-            .insertSeparators { before, _ ->
+            .insertSeparators { before, after ->
+                if (before == null && after == null) {
+                    return@insertSeparators null
+                }
+                val text: (Long) -> String = { minutesAgo ->
+                    when {
+                        minutesAgo < 24 * 60 -> "Сегодня"
+                        minutesAgo < 2 * 24 * 60 -> "Вчера"
+                        else -> "На прошлой неделе"
+                    }
+                }
                 val datetime = OffsetDateTime.now().toEpochSecond()
+
                 if (before == null) {
+                    val afterTime = after!!.published.toLong()
+                    val minutesAgoAfter = (datetime - afterTime) / 60
+                    return@insertSeparators SeparatorItem(Random.nextLong(), timing = text(minutesAgoAfter))
+                }
+                if (after == null) {
                     return@insertSeparators null
                 }
 
-                val timing = when ((datetime - before.published.toLong()) / 3600) {
-                    in 0..24 -> "Сегодня"
-                    in 24..47 -> "Вчера"
-                    else -> "На прошлой неделе"
-                }
-                SeparatorItem(Random.nextLong(), timing = timing)
-            }
+                val afterTime = after.published.toLong()
+                val minutesAgoAfter = (datetime - afterTime) / 60
+                val beforeTime = before.published.toLong()
+                val minutesAgoBefore = (datetime - beforeTime) / 60
 
-            .insertSeparators { previous, _ ->
-                if (previous?.id?.rem(5) == 0L) {
-                    Ad(Random.nextLong(), "figma.jpg")
+                if (text(minutesAgoBefore) != text(minutesAgoAfter)) {
+                    SeparatorItem(Random.nextLong(), timing = text(minutesAgoAfter))
                 } else {
-                    null
+                    if (before.id.rem(5) == 0L) {
+                        Ad(Random.nextLong(), "figma.jpg")
+                    } else {
+                        null
+                    }
                 }
             }
     }
